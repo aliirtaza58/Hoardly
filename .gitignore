@@ -42,3 +42,7 @@ Thumbs.db
 AUDIT_REPORT.md
 review_notes.md
 diagnostic_output.txt
+
+# Agentic context and tracking files
+.agents/
+
