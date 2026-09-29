@@ -22,7 +22,7 @@ export function HomePage() {
           </h1>
 
           <p className="text-lg text-content-secondary leading-relaxed">
-            Welcome to Aura Store. Experience precision craftsmanship, seamless ordering, and dependable delivery.
+            Welcome to Hoardly. Experience precision craftsmanship, seamless ordering, and dependable delivery.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">

@@ -20,12 +20,12 @@ export function Navbar() {
         <Link
           to="/"
           className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-content-primary hover:opacity-90 transition-opacity"
-          aria-label="Aura Store homepage"
+          aria-label="Hoardly homepage"
         >
           <div className="w-8 h-8 rounded-md bg-brand flex items-center justify-center text-content-on-action shadow-xs">
             <ShoppingBag className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
-          <span>Aura Store</span>
+          <span>Hoardly</span>
         </Link>
 
         {/* Navigation Links */}

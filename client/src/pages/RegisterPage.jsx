@@ -108,7 +108,7 @@ export function RegisterPage() {
             Create account
           </h1>
           <p className="text-sm text-content-secondary">
-            Join Aura Store to explore products, build wishlists, and track orders.
+            Join Hoardly to explore products, build wishlists, and track orders.
           </p>
         </div>
 
