@@ -10,8 +10,7 @@ export function CartSummary({ subtotal, itemCount }) {
       <h2 className="text-lg font-semibold text-content-primary">Order summary</h2>
       <div className="mt-5 space-y-3 border-b border-line pb-5 text-sm"><div className="flex justify-between gap-4 text-content-secondary"><span>Items ({itemCount})</span><span>{formatCurrency(subtotal)}</span></div><div className="flex justify-between gap-4 text-content-secondary"><span>Shipping</span><span>Calculated at checkout</span></div></div>
       <div className="mt-5 flex justify-between gap-4 text-base font-bold text-content-primary"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
-      <Button size="lg" disabled className="mt-6 w-full">Continue to checkout <ArrowRight className="h-4 w-4" aria-hidden="true" /></Button>
-      <p className="mt-3 text-center text-xs leading-5 text-content-muted">Checkout is available once delivery details are ready.</p>
+      <Link to="/checkout" className="mt-6 block"><Button size="lg" className="w-full">Continue to checkout <ArrowRight className="h-4 w-4" aria-hidden="true" /></Button></Link>
       <Link to="/products" className="mt-5 block text-center text-sm font-semibold text-content-link hover:underline">Continue shopping</Link>
     </aside>
   );

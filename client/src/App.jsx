@@ -11,6 +11,9 @@ import { CategoriesPage } from './pages/CategoriesPage.jsx';
 import { ProductPage } from './pages/ProductPage.jsx';
 import { CartPage } from './pages/CartPage.jsx';
 import { WishlistPage } from './pages/WishlistPage.jsx';
+import { CheckoutPage } from './pages/CheckoutPage.jsx';
+import { OrderConfirmationPage } from './pages/OrderConfirmationPage.jsx';
+import { OrdersPage } from './pages/OrdersPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
@@ -33,6 +36,9 @@ export default function App() {
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/orders/:id/confirmation" element={<OrderConfirmationPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
