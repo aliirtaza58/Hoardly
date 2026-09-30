@@ -2,11 +2,13 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { Button } from '../common/Button.jsx';
-import { ShoppingBag, User, LogOut, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, User, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
+import { SearchBar } from '../product/SearchBar.jsx';
 
 export function Navbar() {
   const { user, profile, isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const handleSignOut = async () => {
     await logout();
@@ -15,7 +17,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-line bg-surface-card/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           to="/"
@@ -29,7 +31,7 @@ export function Navbar() {
         </Link>
 
         {/* Navigation Links */}
-        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6">
+        <nav aria-label="Main navigation" className="hidden items-center gap-6 md:flex">
           <Link
             to="/"
             className="text-sm font-medium text-content-secondary hover:text-content-primary transition-colors"
@@ -50,8 +52,9 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* User actions */}
-        <div className="flex items-center gap-3">
+        <SearchBar className="hidden max-w-md flex-1 lg:flex" />
+
+        <div className="ml-auto flex items-center gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
@@ -92,8 +95,23 @@ export function Navbar() {
               </Link>
             </div>
           )}
+          <button type="button" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-content-primary hover:bg-surface-muted md:hidden" onClick={() => setIsMenuOpen((isOpen) => !isOpen)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={isMenuOpen}>
+            {isMenuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+          </button>
         </div>
       </div>
+      {isMenuOpen && (
+        <div className="border-t border-line bg-surface-card px-4 py-4 md:hidden">
+          <SearchBar className="mb-4" />
+          <nav aria-label="Mobile navigation" className="grid gap-1">
+            {[
+              ['/', 'Home'],
+              ['/products', 'Products'],
+              ['/categories', 'Categories'],
+            ].map(([to, label]) => <Link key={to} to={to} onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-muted hover:text-content-primary">{label}</Link>)}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
