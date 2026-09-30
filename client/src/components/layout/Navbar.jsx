@@ -2,13 +2,17 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { Button } from '../common/Button.jsx';
-import { ShoppingBag, User, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, Heart, User, LogOut, ShieldCheck, Menu, X } from 'lucide-react';
 import { SearchBar } from '../product/SearchBar.jsx';
+import { useCart } from '../../contexts/CartContext.jsx';
+import { useWishlist } from '../../contexts/WishlistContext.jsx';
 
 export function Navbar() {
   const { user, profile, isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { count: cartCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
 
   const handleSignOut = async () => {
     await logout();
@@ -55,6 +59,8 @@ export function Navbar() {
         <SearchBar className="hidden max-w-md flex-1 lg:flex" />
 
         <div className="ml-auto flex items-center gap-3">
+          <Link to="/wishlist" className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-content-primary hover:bg-surface-muted" aria-label={`Saved items${wishlistCount ? `, ${wishlistCount} saved` : ''}`}><Heart className="h-5 w-5" aria-hidden="true" />{wishlistCount > 0 && <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-content-on-action">{wishlistCount}</span>}</Link>
+          <Link to="/cart" className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-content-primary hover:bg-surface-muted" aria-label={`Shopping cart${cartCount ? `, ${cartCount} items` : ''}`}><ShoppingCart className="h-5 w-5" aria-hidden="true" />{cartCount > 0 && <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-content-on-action">{cartCount}</span>}</Link>
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
@@ -108,6 +114,8 @@ export function Navbar() {
               ['/', 'Home'],
               ['/products', 'Products'],
               ['/categories', 'Categories'],
+              ['/wishlist', 'Saved items'],
+              ['/cart', 'Shopping cart'],
             ].map(([to, label]) => <Link key={to} to={to} onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-muted hover:text-content-primary">{label}</Link>)}
           </nav>
         </div>

@@ -11,8 +11,13 @@ import wishlistRoutes from './routes/wishlist.js';
 const app = express();
 
 // Middleware
+const allowedOrigins = new Set([config.clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173']);
+
 app.use(cors({
-  origin: config.clientUrl,
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+    return callback(new Error('Origin is not allowed by CORS.'));
+  },
   credentials: true,
 }));
 app.use(express.json());

@@ -1,12 +1,16 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import { CartProvider } from './contexts/CartContext.jsx';
+import { WishlistProvider } from './contexts/WishlistContext.jsx';
 import { Navbar } from './components/layout/Navbar.jsx';
 import { Footer } from './components/layout/Footer.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { ProductsPage } from './pages/ProductsPage.jsx';
 import { CategoriesPage } from './pages/CategoriesPage.jsx';
 import { ProductPage } from './pages/ProductPage.jsx';
+import { CartPage } from './pages/CartPage.jsx';
+import { WishlistPage } from './pages/WishlistPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
@@ -17,6 +21,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
         <div className="min-h-screen flex flex-col bg-surface-page text-content-primary">
           <Navbar />
           <main className="flex-1">
@@ -25,6 +31,8 @@ export default function App() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/products/:slug" element={<ProductPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -34,6 +42,8 @@ export default function App() {
           </main>
           <Footer />
         </div>
+          </WishlistProvider>
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );

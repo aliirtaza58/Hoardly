@@ -1,14 +1,35 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
+import { Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import { useWishlist } from '../../contexts/WishlistContext.jsx';
 import { StarRating } from './StarRating.jsx';
 import { formatCurrency } from '../../utils/formatters.js';
 
 export function ProductCard({ product }) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { isSaved, toggleWishlist } = useWishlist();
+  const [isSaving, setIsSaving] = React.useState(false);
   const image = product.images?.[0] || product.image_url;
   const discount = product.compare_at_price && Number(product.compare_at_price) > Number(product.price)
     ? Math.round((1 - Number(product.price) / Number(product.compare_at_price)) * 100)
     : null;
+
+  const handleSave = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await toggleWishlist(product.id);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <article className="group overflow-hidden rounded-lg border border-line bg-surface-card shadow-xs transition-shadow duration-normal hover:shadow-md">
@@ -25,6 +46,7 @@ export function ProductCard({ product }) {
             <div className="flex h-full items-center justify-center text-sm text-content-muted">Image unavailable</div>
           )}
           {discount && <span className="absolute left-3 top-3 rounded-sm bg-surface-card px-2 py-1 text-xs font-semibold text-feedback-success shadow-xs">Save {discount}%</span>}
+          <button type="button" disabled={isSaving} onClick={handleSave} className={`absolute right-3 top-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-surface-card text-content-primary shadow-xs hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${isSaved(product.id) ? 'text-feedback-error' : ''}`} aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
         </div>
       </Link>
       <div className="space-y-3 p-4">

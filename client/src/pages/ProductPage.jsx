@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Check, ChevronLeft, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Check, ChevronLeft, Heart, Minus, Plus, ShieldCheck } from 'lucide-react';
 import { productsService } from '../services/products.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { Button } from '../components/common/Button.jsx';
@@ -8,10 +8,15 @@ import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
 import { StarRating } from '../components/product/StarRating.jsx';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
+import { useCart } from '../contexts/CartContext.jsx';
+import { useWishlist } from '../contexts/WishlistContext.jsx';
 
 export function ProductPage() {
   const { slug } = useParams();
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { isSaved, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [activeImage, setActiveImage] = useState(0);
@@ -21,6 +26,11 @@ export function ProductPage() {
   const [reviewSuccess, setReviewSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: '5', title: '', body: '' });
+  const [quantity, setQuantity] = useState(1);
+  const [cartStatus, setCartStatus] = useState('');
+  const [cartError, setCartError] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -66,6 +76,37 @@ export function ProductPage() {
     }
   };
 
+  const addItem = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setIsAdding(true);
+    setCartStatus('');
+    setCartError('');
+    try {
+      await addToCart(product.id, quantity);
+      setCartStatus('Added to your cart.');
+    } catch (requestError) {
+      setCartError(requestError.message || 'Could not add this item. Please try again.');
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const saveItem = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await toggleWishlist(product.id);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (isLoading) return <div className="flex min-h-96 items-center justify-center"><Spinner size="lg" /><span className="ml-3 text-sm text-content-secondary">Loading product...</span></div>;
   if (error) return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><Alert variant="error" title="Could not load product">{error}</Alert><Link to="/products" className="mt-5 inline-block text-sm font-semibold text-content-link hover:underline">Return to products</Link></div>;
   if (!product) return null;
@@ -91,7 +132,9 @@ export function ProductPage() {
           {hasDiscount && <p className="mt-2 text-sm font-medium text-feedback-success">You save {formatCurrency(Number(product.compare_at_price) - Number(product.price))}.</p>}
           <p className="mt-6 text-base leading-7 text-content-secondary">{product.description}</p>
           <div className="mt-8 border-y border-line py-6"><p className="text-sm font-semibold text-content-primary">Availability</p><p className="mt-2 flex items-center gap-2 text-sm text-feedback-success"><Check className="h-4 w-4" aria-hidden="true" /> {product.stock_quantity > 0 ? `${product.stock_quantity} currently available` : 'Currently unavailable'}</p></div>
-          <p className="mt-6 flex items-center gap-2 text-sm text-content-secondary"><ShieldCheck className="h-4 w-4 text-feedback-success" aria-hidden="true" /> Secure delivery details are confirmed once an order is ready to place.</p>
+          <div className="mt-6 flex flex-wrap gap-3"><div className="inline-flex items-center rounded-md border border-line bg-surface-card"><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} disabled={quantity <= 1 || isAdding} className="inline-flex min-h-11 min-w-11 items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label="Decrease quantity"><Minus className="h-4 w-4" aria-hidden="true" /></button><span className="w-10 text-center text-sm font-semibold" aria-live="polite">{quantity}</span><button type="button" onClick={() => setQuantity((value) => Math.min(product.stock_quantity || 1, value + 1))} disabled={!product.stock_quantity || quantity >= product.stock_quantity || isAdding} className="inline-flex min-h-11 min-w-11 items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label="Increase quantity"><Plus className="h-4 w-4" aria-hidden="true" /></button></div><Button size="lg" isLoading={isAdding} disabled={!product.stock_quantity} onClick={addItem} className="flex-1">Add to cart</Button><Button variant="secondary" size="lg" isLoading={isSaving} onClick={saveItem} aria-label={isSaved(product.id) ? 'Remove from saved items' : 'Save item'}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current text-feedback-error' : ''}`} aria-hidden="true" /></Button></div>
+          {cartError && <Alert variant="error" className="mt-4">{cartError}</Alert>}{cartStatus && <Alert variant="success" className="mt-4">{cartStatus}</Alert>}
+          <p className="mt-3 flex items-center gap-2 text-sm text-content-secondary"><ShieldCheck className="h-4 w-4 text-feedback-success" aria-hidden="true" /> Secure delivery details are confirmed once an order is ready to place.</p>
         </section>
       </div>
       <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
