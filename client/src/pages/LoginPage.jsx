@@ -7,6 +7,13 @@ import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 import { ShoppingBag } from 'lucide-react';
 
+function safeRedirectPath(path) {
+  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
+    return '/';
+  }
+  return path;
+}
+
 export function LoginPage() {
   const { login, error: authError, clearError } = useAuth();
   const navigate = useNavigate();
@@ -16,13 +23,13 @@ export function LoginPage() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const redirectPath = location.state?.from?.pathname || '/';
+  const redirectPath = safeRedirectPath(location.state?.from?.pathname);
 
   const validateForm = () => {
     const errors = {};
     if (!formData.email.trim()) {
       errors.email = 'Email address is missing. An email is required to identify your account. Please enter your email address.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+    } else if (!(import.meta.env.DEV && formData.email.trim().toLowerCase() === (import.meta.env.VITE_LOCAL_ADMIN_USERNAME || 'admin')) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       errors.email = 'Email address format is invalid. It does not match standard mailbox format. Please enter a valid address like user@example.com.';
     }
 

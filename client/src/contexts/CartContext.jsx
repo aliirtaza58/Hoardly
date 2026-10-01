@@ -15,11 +15,11 @@ function cartReducer(state, action) {
 }
 
 export function CartProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isDemoAdmin } = useAuth();
   const [state, dispatch] = useReducer(cartReducer, { items: [], isLoading: false, error: null });
 
   const refreshCart = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || isDemoAdmin) {
       dispatch({ type: 'reset' });
       return;
     }
@@ -32,7 +32,7 @@ export function CartProvider({ children }) {
     } finally {
       dispatch({ type: 'loading', value: false });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isDemoAdmin]);
 
   useEffect(() => { refreshCart(); }, [refreshCart]);
 

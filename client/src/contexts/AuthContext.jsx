@@ -2,6 +2,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { authService } from '../services/auth.js';
 
 const AuthContext = createContext(null);
+const DEMO_ADMIN_TOKEN = 'hoardly-local-demo-admin';
+const DEMO_ADMIN_USERNAME = import.meta.env.VITE_LOCAL_ADMIN_USERNAME || 'admin';
+const DEMO_ADMIN_PASSWORD = import.meta.env.VITE_LOCAL_ADMIN_PASSWORD;
+const DEMO_ADMIN_USER = {
+  id: 'local-demo-admin',
+  email: 'admin@hoardly.local',
+  profile: { id: 'local-demo-admin', email: 'admin@hoardly.local', full_name: 'Hoardly Admin', role: 'admin' },
+};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -16,6 +24,12 @@ export function AuthProvider({ children }) {
   const initAuth = useCallback(async () => {
     const storedToken = localStorage.getItem('auth_token');
     if (!storedToken) {
+      setIsLoading(false);
+      return;
+    }
+    if (import.meta.env.DEV && storedToken === DEMO_ADMIN_TOKEN) {
+      setUser(DEMO_ADMIN_USER);
+      setProfile(DEMO_ADMIN_USER.profile);
       setIsLoading(false);
       return;
     }
@@ -45,6 +59,13 @@ export function AuthProvider({ children }) {
     setIsLoading(true);
     setError(null);
     try {
+      if (import.meta.env.DEV && email.trim().toLowerCase() === DEMO_ADMIN_USERNAME && password === DEMO_ADMIN_PASSWORD) {
+        localStorage.setItem('auth_token', DEMO_ADMIN_TOKEN);
+        setToken(DEMO_ADMIN_TOKEN);
+        setUser(DEMO_ADMIN_USER);
+        setProfile(DEMO_ADMIN_USER.profile);
+        return { user: DEMO_ADMIN_USER, session: { access_token: DEMO_ADMIN_TOKEN } };
+      }
       const res = await authService.login({ email, password });
       const accessToken = res.session?.access_token;
       if (!accessToken) {
@@ -86,7 +107,9 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await authService.logout().catch(() => {});
+      if (localStorage.getItem('auth_token') !== DEMO_ADMIN_TOKEN) {
+        await authService.logout().catch(() => {});
+      }
     } finally {
       localStorage.removeItem('auth_token');
       setToken(null);
@@ -131,6 +154,7 @@ export function AuthProvider({ children }) {
     token,
     isAuthenticated: Boolean(user && token),
     isAdmin: profile?.role === 'admin',
+    isDemoAdmin: import.meta.env.DEV && token === DEMO_ADMIN_TOKEN,
     isLoading,
     error,
     clearError,

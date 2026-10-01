@@ -19,7 +19,14 @@ export async function apiRequest(endpoint, { method = 'GET', body, headers = {} 
     ...(body ? { body: JSON.stringify(body) } : {}),
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  } catch (cause) {
+    const error = new Error('Could not reach the store API. Check that the server is running and its service configuration is valid.');
+    error.cause = cause;
+    throw error;
+  }
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {

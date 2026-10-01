@@ -21,6 +21,9 @@ export async function register(req, res, next) {
       if (error.message && error.message.toLowerCase().includes('already registered')) {
         throw createError(409, 'An account with this email already exists. Please sign in instead.');
       }
+      if (error.name === 'AuthRetryableFetchError' || error.message?.toLowerCase().includes('fetch failed')) {
+        throw createError(503, 'Account creation is temporarily unavailable because the identity service could not be reached. Check the server Supabase settings and try again.');
+      }
       throw createError(400, error.message || 'Registration failed. Please check your information and try again.');
     }
 

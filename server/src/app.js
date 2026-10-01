@@ -10,11 +10,15 @@ import wishlistRoutes from './routes/wishlist.js';
 import orderRoutes from './routes/orders.js';
 import addressRoutes from './routes/addresses.js';
 import userRoutes from './routes/users.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 
 // Middleware
-const allowedOrigins = new Set([config.clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173']);
+const developmentOrigins = process.env.NODE_ENV === 'production'
+  ? []
+  : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174'];
+const allowedOrigins = new Set([config.clientUrl, ...developmentOrigins]);
 
 app.use(cors({
   origin(origin, callback) {
@@ -39,6 +43,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/users/addresses', addressRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling (must be last)
 app.use(errorHandler);

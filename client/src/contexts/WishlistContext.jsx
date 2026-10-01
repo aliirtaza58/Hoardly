@@ -15,11 +15,11 @@ function wishlistReducer(state, action) {
 }
 
 export function WishlistProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isDemoAdmin } = useAuth();
   const [state, dispatch] = useReducer(wishlistReducer, { items: [], isLoading: false, error: null });
 
   const refreshWishlist = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || isDemoAdmin) {
       dispatch({ type: 'reset' });
       return;
     }
@@ -32,7 +32,7 @@ export function WishlistProvider({ children }) {
     } finally {
       dispatch({ type: 'loading', value: false });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isDemoAdmin]);
 
   useEffect(() => { refreshWishlist(); }, [refreshWishlist]);
 

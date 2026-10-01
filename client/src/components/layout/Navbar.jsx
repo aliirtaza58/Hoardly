@@ -64,10 +64,10 @@ export function Navbar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
-                <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand/10 text-brand">
+                <Link to="/admin" className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand/10 text-brand hover:bg-brand/15">
                   <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
                   Admin
-                </span>
+                </Link>
               )}
               <Link to="/account" className="flex items-center gap-2 text-sm text-content-secondary hover:text-content-primary" aria-label="Open your account">
                 <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center text-content-primary border border-line">
@@ -117,6 +117,7 @@ export function Navbar() {
               ['/wishlist', 'Saved items'],
               ['/cart', 'Shopping cart'],
               ...(isAuthenticated ? [['/account', 'My account'], ['/orders', 'Order history']] : []),
+              ...(isAdmin ? [['/admin', 'Admin dashboard']] : []),
             ].map(([to, label]) => <Link key={to} to={to} onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-muted hover:text-content-primary">{label}</Link>)}
           </nav>
         </div>

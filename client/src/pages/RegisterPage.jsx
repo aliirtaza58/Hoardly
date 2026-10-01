@@ -21,6 +21,7 @@ export function RegisterPage() {
 
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registrationMessage, setRegistrationMessage] = useState('');
 
   const passwordValidation = {
     length: formData.password.length >= 8,
@@ -82,13 +83,17 @@ export function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      await register({
+      const response = await register({
         full_name: formData.full_name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim() || undefined,
         password: formData.password,
       });
-      navigate('/', { replace: true });
+      if (response.session?.access_token) {
+        navigate('/', { replace: true });
+      } else {
+        setRegistrationMessage(response.message || 'Your account was created. Check your email for a confirmation link before signing in.');
+      }
     } catch (err) {
       // Error is set in AuthContext
     } finally {
@@ -118,6 +123,7 @@ export function RegisterPage() {
             {authError}
           </Alert>
         )}
+        {registrationMessage && <Alert variant="success">{registrationMessage}</Alert>}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
