@@ -390,12 +390,34 @@ export async function getProductReviews(req, res, next) {
   }
 }
 
+export async function getReviewEligibility(req, res, next) {
+  try {
+    const productId = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(productId)) {
+      throw createError(400, 'Product could not be identified. Refresh the page and try again.');
+    }
+
+    const { data, error } = await req.supabase
+      .from('orders')
+      .select('id, order_items!inner(product_id)')
+      .eq('user_id', req.user.id)
+      .eq('status', 'delivered')
+      .eq('order_items.product_id', productId)
+      .limit(1);
+
+    if (error) throw error;
+    res.json({ eligible: Boolean(data?.length) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function createReview(req, res, next) {
   try {
     const productId = parseInt(req.params.id, 10);
     const { rating, title, body } = req.body;
 
-    if (!rating || rating < 1 || rating > 5) {
+    if (!Number.isInteger(Number(rating)) || Number(rating) < 1 || Number(rating) > 5) {
       throw createError(400, 'Rating is required. Please provide a rating between 1 and 5 stars.');
     }
     if (!title?.trim()) {
@@ -403,6 +425,19 @@ export async function createReview(req, res, next) {
     }
     if (!body?.trim()) {
       throw createError(400, 'Review body is missing. Please write your feedback describing your experience with the item.');
+    }
+
+    const { data: purchases, error: purchaseError } = await req.supabase
+      .from('orders')
+      .select('id, order_items!inner(product_id)')
+      .eq('user_id', req.user.id)
+      .eq('status', 'delivered')
+      .eq('order_items.product_id', productId)
+      .limit(1);
+
+    if (purchaseError) throw purchaseError;
+    if (!purchases?.length) {
+      throw createError(403, 'A delivered purchase is required before reviewing this product.');
     }
 
     const reviewData = {
@@ -415,28 +450,17 @@ export async function createReview(req, res, next) {
       created_at: new Date().toISOString(),
     };
 
-    try {
-      const { data, error } = await req.supabase
-        .from('reviews')
-        .insert(reviewData)
-        .select()
-        .single();
+    const { data, error } = await req.supabase
+      .from('reviews')
+      .insert(reviewData)
+      .select()
+      .single();
 
-      if (!error && data) {
-        return res.status(201).json({
-          message: 'Review submitted successfully.',
-          review: data,
-        });
-      }
-    } catch {
-      // Fallback
-    }
-
+    if (error) throw error;
     res.status(201).json({
       message: 'Review submitted successfully.',
       review: {
-        id: Date.now(),
-        ...reviewData,
+        ...data,
         user_name: req.user.user_metadata?.full_name || 'Verified Customer',
       },
     });

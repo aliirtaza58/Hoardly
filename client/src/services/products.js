@@ -25,6 +25,10 @@ export const productsService = {
     return apiRequest(`/products/${productId}/reviews`);
   },
 
+  async getReviewEligibility(productId) {
+    return apiRequest(`/products/${productId}/review-eligibility`);
+  },
+
   async createReview(productId, reviewData) {
     return apiRequest(`/products/${productId}/reviews`, {
       method: 'POST',

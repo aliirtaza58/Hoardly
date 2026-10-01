@@ -13,7 +13,7 @@ import { useWishlist } from '../contexts/WishlistContext.jsx';
 
 export function ProductPage() {
   const { slug } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isSaved, toggleWishlist } = useWishlist();
@@ -24,6 +24,7 @@ export function ProductPage() {
   const [error, setError] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [reviewSuccess, setReviewSuccess] = useState('');
+  const [reviewEligibility, setReviewEligibility] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: '5', title: '', body: '' });
   const [quantity, setQuantity] = useState(1);
@@ -58,6 +59,16 @@ export function ProductPage() {
     return () => { isActive = false; };
   }, [slug]);
 
+  useEffect(() => {
+    if (!product || !isAuthenticated || !user?.id) return undefined;
+    let isActive = true;
+    const key = `${product.id}:${user.id}`;
+    productsService.getReviewEligibility(product.id)
+      .then((response) => { if (isActive) setReviewEligibility({ key, eligible: response.eligible }); })
+      .catch((requestError) => { if (isActive) setReviewEligibility({ key, eligible: false, error: requestError.message || 'Purchase eligibility could not be checked.' }); });
+    return () => { isActive = false; };
+  }, [product, isAuthenticated, user?.id]);
+
   const submitReview = async (event) => {
     event.preventDefault();
     if (!product) return;
@@ -67,6 +78,7 @@ export function ProductPage() {
     try {
       const response = await productsService.createReview(product.id, { ...reviewForm, rating: Number(reviewForm.rating) });
       setReviews((current) => [response.review, ...current]);
+      productsService.getProductBySlug(product.slug).then((productResponse) => setProduct(productResponse.product)).catch(() => {});
       setReviewForm({ rating: '5', title: '', body: '' });
       setReviewSuccess('Your review has been submitted and is now visible with this product.');
     } catch (requestError) {
@@ -111,6 +123,11 @@ export function ProductPage() {
   if (error) return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><Alert variant="error" title="Could not load product">{error}</Alert><Link to="/products" className="mt-5 inline-block text-sm font-semibold text-content-link hover:underline">Return to products</Link></div>;
   if (!product) return null;
 
+  const reviewEligibilityKey = `${product.id}:${user?.id}`;
+  const hasReviewEligibility = reviewEligibility?.key === reviewEligibilityKey;
+  const canReview = hasReviewEligibility && reviewEligibility.eligible;
+  const isCheckingReviewEligibility = isAuthenticated && !hasReviewEligibility;
+  const reviewEligibilityError = hasReviewEligibility ? reviewEligibility.error : '';
   const images = product.images?.length ? product.images : [];
   const hasDiscount = product.compare_at_price && Number(product.compare_at_price) > Number(product.price);
 
@@ -143,7 +160,7 @@ export function ProductPage() {
       </div>
       <section className="mt-16 border-t border-line pt-12" aria-labelledby="reviews-heading"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-sm font-semibold text-content-link">Customer feedback</p><h2 id="reviews-heading" className="mt-2 text-2xl font-bold text-content-primary">Reviews for {product.name}</h2></div><StarRating rating={product.avg_rating} reviewCount={product.review_count} size="lg" /></div>
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]"><div className="space-y-5">{reviews.length ? reviews.map((review) => <article key={review.id} className="rounded-lg border border-line bg-surface-card p-5"><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-semibold text-content-primary">{review.user_name || 'Verified customer'}</p><span className="text-xs text-content-muted">{formatDate(review.created_at)}</span></div><div className="mt-2"><StarRating rating={review.rating} showValue={false} /></div><h3 className="mt-3 font-semibold text-content-primary">{review.title}</h3><p className="mt-2 text-sm leading-6 text-content-secondary">{review.body}</p></article>) : <div className="rounded-lg border border-dashed border-line-strong p-6 text-sm text-content-secondary">No reviews yet. Be the first to share your experience.</div>}</div>
-          <div className="rounded-lg border border-line bg-surface-card p-5"><h3 className="text-lg font-semibold text-content-primary">Write a review</h3>{isAuthenticated ? <form className="mt-5 space-y-4" onSubmit={submitReview}><label className="block text-sm font-medium text-content-primary">Rating<select value={reviewForm.rating} onChange={(event) => setReviewForm((current) => ({ ...current, rating: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm">{[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating} stars</option>)}</select></label><label className="block text-sm font-medium text-content-primary">Review title<input required value={reviewForm.title} onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label><label className="block text-sm font-medium text-content-primary">Your review<textarea required rows="4" value={reviewForm.body} onChange={(event) => setReviewForm((current) => ({ ...current, body: event.target.value }))} className="mt-2 block w-full resize-y rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label>{reviewError && <Alert variant="error">{reviewError}</Alert>}{reviewSuccess && <Alert variant="success">{reviewSuccess}</Alert>}<Button type="submit" isLoading={isSubmitting} className="w-full">Submit review</Button></form> : <div className="mt-4"><p className="text-sm leading-6 text-content-secondary">Sign in to share feedback based on your experience with this product.</p><Link to="/login" className="mt-4 inline-block text-sm font-semibold text-content-link hover:underline">Sign in to review</Link></div>}</div>
+          <div className="rounded-lg border border-line bg-surface-card p-5"><h3 className="text-lg font-semibold text-content-primary">Write a review</h3>{!isAuthenticated ? <div className="mt-4"><p className="text-sm leading-6 text-content-secondary">Sign in to share feedback after a delivered purchase.</p><Link to="/login" className="mt-4 inline-block text-sm font-semibold text-content-link hover:underline">Sign in to review</Link></div> : isCheckingReviewEligibility ? <div className="mt-5 flex items-center gap-3 text-sm text-content-secondary"><Spinner size="sm" />Checking purchase eligibility...</div> : canReview ? reviews.some((review) => review.user_id === user?.id) ? <p className="mt-4 text-sm leading-6 text-content-secondary">You have already reviewed this product.</p> : <form className="mt-5 space-y-4" onSubmit={submitReview}><label className="block text-sm font-medium text-content-primary">Rating<select value={reviewForm.rating} onChange={(event) => setReviewForm((current) => ({ ...current, rating: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm">{[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating} stars</option>)}</select></label><label className="block text-sm font-medium text-content-primary">Review title<input required maxLength="120" value={reviewForm.title} onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label><label className="block text-sm font-medium text-content-primary">Your review<textarea required maxLength="3000" rows="4" value={reviewForm.body} onChange={(event) => setReviewForm((current) => ({ ...current, body: event.target.value }))} className="mt-2 block w-full resize-y rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label>{reviewError && <Alert variant="error">{reviewError}</Alert>}{reviewSuccess && <Alert variant="success">{reviewSuccess}</Alert>}<Button type="submit" isLoading={isSubmitting} className="w-full">Submit review</Button></form> : <div className="mt-4"><p className="text-sm leading-6 text-content-secondary">A delivered purchase is required before you can review this product.</p>{reviewEligibilityError && <Alert variant="warning" className="mt-3">{reviewEligibilityError}</Alert>}</div>}</div>
         </div>
       </section>
     </div>

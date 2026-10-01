@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);
 
   const clearError = useCallback(() => setError(null), []);
+  const syncProfile = useCallback((updatedProfile) => setProfile(updatedProfile), []);
 
   const initAuth = useCallback(async () => {
     const storedToken = localStorage.getItem('auth_token');
@@ -45,7 +46,10 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       const res = await authService.login({ email, password });
-      const accessToken = res.session?.access_token || 'mock_dev_token';
+      const accessToken = res.session?.access_token;
+      if (!accessToken) {
+        throw new Error('Sign-in could not be completed. Please verify your email address or try again.');
+      }
       localStorage.setItem('auth_token', accessToken);
       setToken(accessToken);
       setUser(res.user);
@@ -123,6 +127,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     profile,
+    syncProfile,
     token,
     isAuthenticated: Boolean(user && token),
     isAdmin: profile?.role === 'admin',

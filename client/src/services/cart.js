@@ -6,4 +6,5 @@ export const cartService = {
   updateItem: (itemId, quantity) => apiRequest(`/cart/${itemId}`, { method: 'PUT', body: { quantity } }),
   removeItem: (itemId) => apiRequest(`/cart/${itemId}`, { method: 'DELETE' }),
   clearCart: () => apiRequest('/cart', { method: 'DELETE' }),
+  applyDiscount: (code) => apiRequest('/cart/apply-discount', { method: 'POST', body: { code } }),
 };

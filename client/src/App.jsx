@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
 import { WishlistProvider } from './contexts/WishlistContext.jsx';
+import { ProtectedRoute } from './components/auth/ProtectedRoute.jsx';
 import { Navbar } from './components/layout/Navbar.jsx';
 import { Footer } from './components/layout/Footer.jsx';
 import { HomePage } from './pages/HomePage.jsx';
@@ -14,6 +15,8 @@ import { WishlistPage } from './pages/WishlistPage.jsx';
 import { CheckoutPage } from './pages/CheckoutPage.jsx';
 import { OrderConfirmationPage } from './pages/OrderConfirmationPage.jsx';
 import { OrdersPage } from './pages/OrdersPage.jsx';
+import { OrderDetailPage } from './pages/OrderDetailPage.jsx';
+import { ProfilePage } from './pages/ProfilePage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
@@ -36,9 +39,11 @@ export default function App() {
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/orders/:id/confirmation" element={<OrderConfirmationPage />} />
+              <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+              <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+              <Route path="/orders/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+              <Route path="/orders/:id/confirmation" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
+              <Route path="/account" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

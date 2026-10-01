@@ -69,14 +69,14 @@ export function Navbar() {
                   Admin
                 </span>
               )}
-              <div className="flex items-center gap-2 text-sm text-content-secondary">
+              <Link to="/account" className="flex items-center gap-2 text-sm text-content-secondary hover:text-content-primary" aria-label="Open your account">
                 <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center text-content-primary border border-line">
                   <User className="w-4 h-4" aria-hidden="true" />
                 </div>
                 <span className="hidden sm:inline-block font-medium text-content-primary">
                   {profile?.full_name || user?.email?.split('@')[0]}
                 </span>
-              </div>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
@@ -116,6 +116,7 @@ export function Navbar() {
               ['/categories', 'Categories'],
               ['/wishlist', 'Saved items'],
               ['/cart', 'Shopping cart'],
+              ...(isAuthenticated ? [['/account', 'My account'], ['/orders', 'Order history']] : []),
             ].map(([to, label]) => <Link key={to} to={to} onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-muted hover:text-content-primary">{label}</Link>)}
           </nav>
         </div>
