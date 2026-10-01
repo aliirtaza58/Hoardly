@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { adminService } from '../../services/admin.js';
 import { Alert } from '../../components/common/Alert.jsx';
 import { Button } from '../../components/common/Button.jsx';
@@ -17,10 +17,13 @@ export function AdminProductsPage() {
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const imageInputRef = useRef(null);
 
   const load = async () => {
     const [productResponse, categoryResponse] = await Promise.all([adminService.getProducts({ search }), adminService.getCategories()]);
@@ -50,11 +53,32 @@ export function AdminProductsPage() {
       compare_at_price: product.compare_at_price == null ? '' : String(product.compare_at_price),
       stock_quantity: String(product.stock_quantity),
       category_id: String(product.category_id),
-      images: (product.images || []).join(', '),
+      images: (product.images || []).join('\n'),
       attributes: JSON.stringify(product.attributes || {}, null, 2),
     });
     setMessage('');
     setError('');
+  };
+
+  const uploadImage = async () => {
+    if (!imageFile) return;
+    setError('');
+    setMessage('');
+    setIsUploadingImage(true);
+    try {
+      const { url } = await adminService.uploadProductImage(imageFile);
+      setForm((current) => ({
+        ...current,
+        images: [...current.images.split(/\r?\n/).map((item) => item.trim()).filter(Boolean), url].join('\n'),
+      }));
+      setImageFile(null);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+      setMessage('Image uploaded. Save the product to attach it to the catalog item.');
+    } catch (requestError) {
+      setError(requestError.message || 'Image upload failed. Try another image.');
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const submit = async (event) => {
@@ -72,7 +96,7 @@ export function AdminProductsPage() {
         compare_at_price: form.compare_at_price === '' ? null : Number(form.compare_at_price),
         stock_quantity: Number(form.stock_quantity),
         category_id: Number(form.category_id),
-        images: form.images.split(',').map((value) => value.trim()).filter(Boolean),
+        images: form.images.split(/\r?\n/).map((value) => value.trim()).filter(Boolean),
         attributes: JSON.parse(form.attributes || '{}'),
         is_active: Boolean(form.is_active),
       };
@@ -114,7 +138,8 @@ export function AdminProductsPage() {
           <label className="block text-sm font-medium text-content-primary">Category<select required value={form.category_id} onChange={(event) => change('category_id', event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm"><option value="">Choose category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
           <label className="flex items-center gap-2 self-end pb-2 text-sm text-content-primary"><input type="checkbox" checked={Boolean(form.is_active)} onChange={(event) => change('is_active', event.target.checked)} className="h-4 w-4 accent-brand" />Visible in store</label>
           <label className="block text-sm font-medium text-content-primary sm:col-span-2 xl:col-span-3">Description<textarea required rows="3" value={form.description} onChange={(event) => change('description', event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label>
-          <label className="block text-sm font-medium text-content-primary sm:col-span-2 xl:col-span-3">Image URLs, comma-separated<input value={form.images} onChange={(event) => change('images', event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label>
+          <div className="sm:col-span-2 xl:col-span-3"><label className="block text-sm font-medium text-content-primary">Upload an image from this device<input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" onChange={(event) => setImageFile(event.target.files?.[0] || null)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm file:mr-3 file:rounded-sm file:border-0 file:bg-surface-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-content-primary" /></label><p className="mt-2 text-xs text-content-secondary">JPG, PNG, WebP, AVIF, or GIF. Supabase uploads support up to 5 MB; the local demo supports up to 350 KB.</p><Button type="button" variant="secondary" isLoading={isUploadingImage} disabled={!imageFile || isSaving} onClick={uploadImage} className="mt-3">Upload image</Button></div>
+          <label className="block text-sm font-medium text-content-primary sm:col-span-2 xl:col-span-3">Image URLs, one per line<textarea rows="3" value={form.images} onChange={(event) => change('images', event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /></label>
           <label className="block text-sm font-medium text-content-primary sm:col-span-2 xl:col-span-3">Attributes (JSON)<textarea rows="3" value={form.attributes} onChange={(event) => change('attributes', event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 font-mono text-xs" /></label>
           <div className="sm:col-span-2 xl:col-span-3"><Button type="submit" isLoading={isSaving}>{editingId ? 'Save product' : 'Create product'}</Button></div>
         </form>

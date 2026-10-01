@@ -1,4 +1,5 @@
 import { apiRequest } from './api.js';
+import { createClient } from '@supabase/supabase-js';
 
 const DEMO_ADMIN_TOKEN = 'hoardly-local-demo-admin';
 const DEMO_STORE_KEY = 'hoardly-local-admin-data';
@@ -79,7 +80,50 @@ function nextId(items) {
   return items.reduce((max, item) => Math.max(max, Number(item.id) || 0), 0) + 1;
 }
 
+const allowedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif']);
+
+function readAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('The selected image could not be read.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 export const adminService = {
+  uploadProductImage: async (file) => {
+    if (!file || !allowedImageTypes.has(file.type)) {
+      throw new Error('Choose a JPG, PNG, WebP, AVIF, or GIF image.');
+    }
+    if (isDemoAdmin()) {
+      if (file.size > 350 * 1024) throw new Error('Local demo uploads are limited to 350 KB. Use a real Supabase admin account for larger images.');
+      return { url: await readAsDataUrl(file) };
+    }
+    if (file.size > 5 * 1024 * 1024) throw new Error('Images must be 5 MB or smaller.');
+
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const accessToken = localStorage.getItem('auth_token');
+    if (!supabaseUrl || !supabaseAnonKey || !accessToken) {
+      throw new Error('Image uploads require a signed-in admin and configured Supabase client settings.');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
+    });
+    const extension = file.type === 'image/jpeg' ? 'jpg' : file.type.split('/')[1];
+    const path = `products/${crypto.randomUUID()}.${extension}`;
+    const { error } = await supabase.storage.from('product-images').upload(path, file, {
+      cacheControl: '31536000',
+      contentType: file.type,
+      upsert: false,
+    });
+    if (error) throw new Error(error.message || 'The image could not be uploaded.');
+    const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+    return { url: data.publicUrl };
+  },
   getStats: () => {
     if (!isDemoAdmin()) return apiRequest('/admin/stats');
     const { orders, products } = readDemoStore();
