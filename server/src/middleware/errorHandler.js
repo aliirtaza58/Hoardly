@@ -5,8 +5,8 @@
 export function errorHandler(err, req, res, _next) {
   console.error(`[Error] ${req.method} ${req.path}:`, err.message);
 
-  const statusCode = err.statusCode || 500;
-  const message = err.statusCode ? err.message : 'An unexpected error occurred. Please try again later.';
+  const statusCode = err.statusCode || (err.type === 'entity.parse.failed' ? 400 : err.type === 'entity.too.large' ? 413 : 500);
+  const message = err.statusCode ? err.message : statusCode === 400 ? 'The request contains invalid JSON.' : statusCode === 413 ? 'The request is too large.' : 'An unexpected error occurred. Please try again later.';
 
   res.status(statusCode).json({
     error: {

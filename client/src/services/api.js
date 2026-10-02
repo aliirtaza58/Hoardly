@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : '/api')).replace(/\/+$/, '');
 
 /**
  * Custom API client for backend requests.
@@ -23,7 +23,7 @@ export async function apiRequest(endpoint, { method = 'GET', body, headers = {} 
   try {
     response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   } catch (cause) {
-    const error = new Error('Could not reach the store API. Check that the server is running and its service configuration is valid.');
+    const error = new Error('The store could not be reached. Check your connection and try again shortly.');
     error.cause = cause;
     throw error;
   }

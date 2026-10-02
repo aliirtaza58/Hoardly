@@ -4,6 +4,7 @@
   "description": "E-Commerce Website Backend API",
   "main": "index.js",
   "type": "module",
+  "engines": { "node": "24.x" },
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
