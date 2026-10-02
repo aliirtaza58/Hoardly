@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/auth.js';
+import { persistAuthSession, supabaseClient } from '../services/supabase.js';
 
 const AuthContext = createContext(null);
 const DEMO_ADMIN_TOKEN = 'hoardly-local-demo-admin';
@@ -22,7 +23,15 @@ export function AuthProvider({ children }) {
   const syncProfile = useCallback((updatedProfile) => setProfile(updatedProfile), []);
 
   const initAuth = useCallback(async () => {
-    const storedToken = localStorage.getItem('auth_token');
+    let storedToken = localStorage.getItem('auth_token');
+    if (supabaseClient && storedToken !== DEMO_ADMIN_TOKEN) {
+      const { data } = await supabaseClient.auth.getSession();
+      if (data.session) {
+        storedToken = data.session.access_token;
+        localStorage.setItem('auth_token', storedToken);
+        setToken(storedToken);
+      }
+    }
     if (!storedToken) {
       setIsLoading(false);
       return;
@@ -52,7 +61,29 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    const subscription = supabaseClient?.auth.onAuthStateChange((event, session) => {
+      if (!active || event === 'INITIAL_SESSION' || (import.meta.env.DEV && localStorage.getItem('auth_token') === DEMO_ADMIN_TOKEN)) return;
+      if (!session) {
+        localStorage.removeItem('auth_token');
+        setToken(null);
+        setUser(null);
+        setProfile(null);
+        setIsLoading(false);
+        return;
+      }
+      localStorage.setItem('auth_token', session.access_token);
+      setToken(session.access_token);
+      if (event === 'TOKEN_REFRESHED') return;
+      // Fetch the profile through the API, outside the client's auth lock.
+      authService.getMe().then((response) => {
+        if (!active || localStorage.getItem('auth_token') !== session.access_token) return;
+        setUser(response.user);
+        setProfile(response.user.profile || null);
+      }).catch(() => {}).finally(() => { if (active) setIsLoading(false); });
+    }).data.subscription;
     initAuth();
+    return () => { active = false; subscription?.unsubscribe(); };
   }, [initAuth]);
 
   const login = async (email, password) => {
@@ -67,11 +98,7 @@ export function AuthProvider({ children }) {
         return { user: DEMO_ADMIN_USER, session: { access_token: DEMO_ADMIN_TOKEN } };
       }
       const res = await authService.login({ email, password });
-      const accessToken = res.session?.access_token;
-      if (!accessToken) {
-        throw new Error('Sign-in could not be completed. Please verify your email address or try again.');
-      }
-      localStorage.setItem('auth_token', accessToken);
+      const accessToken = await persistAuthSession(res.session);
       setToken(accessToken);
       setUser(res.user);
       setProfile(res.user.profile || null);
@@ -90,8 +117,8 @@ export function AuthProvider({ children }) {
     try {
       const res = await authService.register({ email, password, full_name, phone });
       if (res.session?.access_token) {
-        localStorage.setItem('auth_token', res.session.access_token);
-        setToken(res.session.access_token);
+        const accessToken = await persistAuthSession(res.session);
+        setToken(accessToken);
         setUser(res.user);
         setProfile(res.user.profile || null);
       }
@@ -109,6 +136,7 @@ export function AuthProvider({ children }) {
     try {
       if (localStorage.getItem('auth_token') !== DEMO_ADMIN_TOKEN) {
         await authService.logout().catch(() => {});
+        await supabaseClient?.auth.signOut({ scope: 'local' });
       }
     } finally {
       localStorage.removeItem('auth_token');

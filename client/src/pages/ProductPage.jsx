@@ -32,6 +32,7 @@ export function ProductPage() {
   const [cartError, setCartError] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
     let isActive = true;
@@ -112,8 +113,11 @@ export function ProductPage() {
       return;
     }
     setIsSaving(true);
+    setSaveError('');
     try {
       await toggleWishlist(product.id);
+    } catch (requestError) {
+      setSaveError(requestError.message || 'Could not update saved items. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -150,7 +154,7 @@ export function ProductPage() {
           <p className="mt-6 text-base leading-7 text-content-secondary">{product.description}</p>
           <div className="mt-8 border-y border-line py-6"><p className="text-sm font-semibold text-content-primary">Availability</p><p className="mt-2 flex items-center gap-2 text-sm text-feedback-success"><Check className="h-4 w-4" aria-hidden="true" /> {product.stock_quantity > 0 ? `${product.stock_quantity} currently available` : 'Currently unavailable'}</p></div>
           <div className="mt-6 flex flex-wrap gap-3"><div className="inline-flex items-center rounded-md border border-line bg-surface-card"><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} disabled={quantity <= 1 || isAdding} className="inline-flex min-h-11 min-w-11 items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label="Decrease quantity"><Minus className="h-4 w-4" aria-hidden="true" /></button><span className="w-10 text-center text-sm font-semibold" aria-live="polite">{quantity}</span><button type="button" onClick={() => setQuantity((value) => Math.min(product.stock_quantity || 1, value + 1))} disabled={!product.stock_quantity || quantity >= product.stock_quantity || isAdding} className="inline-flex min-h-11 min-w-11 items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label="Increase quantity"><Plus className="h-4 w-4" aria-hidden="true" /></button></div><Button size="lg" isLoading={isAdding} disabled={!product.stock_quantity} onClick={addItem} className="flex-1">Add to cart</Button><Button variant="secondary" size="lg" isLoading={isSaving} onClick={saveItem} aria-label={isSaved(product.id) ? 'Remove from saved items' : 'Save item'}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current text-feedback-error' : ''}`} aria-hidden="true" /></Button></div>
-          {cartError && <Alert variant="error" className="mt-4">{cartError}</Alert>}{cartStatus && <Alert variant="success" className="mt-4">{cartStatus}</Alert>}
+          {saveError && <Alert variant="error" className="mt-4">{saveError}</Alert>}{cartError && <Alert variant="error" className="mt-4">{cartError}</Alert>}{cartStatus && <Alert variant="success" className="mt-4">{cartStatus}</Alert>}
           <p className="mt-3 flex items-center gap-2 text-sm text-content-secondary"><ShieldCheck className="h-4 w-4 text-feedback-success" aria-hidden="true" /> Secure delivery details are confirmed once an order is ready to place.</p>
         </section>
       </div>

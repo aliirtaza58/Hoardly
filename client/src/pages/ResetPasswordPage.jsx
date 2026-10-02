@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { FormField } from '../components/common/FormField.jsx';
 import { Input } from '../components/common/Input.jsx';
@@ -8,8 +8,7 @@ import { Alert } from '../components/common/Alert.jsx';
 import { Lock, Check } from 'lucide-react';
 
 export function ResetPasswordPage() {
-  const { resetPassword, error: authError, clearError } = useAuth();
-  const navigate = useNavigate();
+  const { resetPassword, logout, isAuthenticated, isLoading, error: authError, clearError } = useAuth();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,10 +54,8 @@ export function ResetPasswordPage() {
     setIsSubmitting(true);
     try {
       await resetPassword(password);
+      await logout();
       setIsSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
     } catch (err) {
       // Handled in context
     } finally {
@@ -91,13 +88,18 @@ export function ResetPasswordPage() {
         {isSuccess ? (
           <div className="space-y-4">
             <Alert variant="success" title="Password updated">
-              Your password has been updated successfully. Redirecting you to sign in...
+              Your password has been updated. Sign in with your new password.
             </Alert>
             <Link to="/login" className="block w-full">
               <Button variant="primary" size="lg" className="w-full">
                 Proceed to sign in
               </Button>
             </Link>
+          </div>
+        ) : !isLoading && !isAuthenticated ? (
+          <div className="space-y-4">
+            <Alert variant="warning">This reset link is missing or expired. Request a new link to update your password.</Alert>
+            <Link to="/forgot-password" className="block text-sm font-semibold text-content-link hover:underline">Request reset link</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -166,6 +168,7 @@ export function ResetPasswordPage() {
               variant="primary"
               size="lg"
               isLoading={isSubmitting}
+              disabled={isLoading || !isAuthenticated}
               className="w-full mt-2"
             >
               Update password

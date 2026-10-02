@@ -13,6 +13,7 @@ export function ProductCard({ product }) {
   const { isAuthenticated } = useAuth();
   const { isSaved, toggleWishlist } = useWishlist();
   const [isSaving, setIsSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState('');
   const image = product.images?.[0] || product.image_url;
   const discount = product.compare_at_price && Number(product.compare_at_price) > Number(product.price)
     ? Math.round((1 - Number(product.price) / Number(product.compare_at_price)) * 100)
@@ -24,8 +25,11 @@ export function ProductCard({ product }) {
       return;
     }
     setIsSaving(true);
+    setSaveError('');
     try {
       await toggleWishlist(product.id);
+    } catch (requestError) {
+      setSaveError(requestError.message || 'Could not update saved items. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -33,8 +37,9 @@ export function ProductCard({ product }) {
 
   return (
     <article className="group overflow-hidden rounded-lg border border-line bg-surface-card shadow-xs transition-shadow duration-normal hover:shadow-md">
-      <Link to={`/products/${product.slug}`} className="block focus-visible:outline-none" aria-label={`View ${product.name}`}>
-        <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">
+      <div className="relative">
+      <Link to={`/products/${product.slug}`} className="block" aria-label={`View ${product.name}`}>
+        <div className="aspect-[4/3] overflow-hidden bg-surface-muted">
           {image ? (
             <img
               src={image}
@@ -46,10 +51,12 @@ export function ProductCard({ product }) {
             <div className="flex h-full items-center justify-center text-sm text-content-muted">Image unavailable</div>
           )}
           {discount && <span className="absolute left-3 top-3 rounded-sm bg-surface-card px-2 py-1 text-xs font-semibold text-feedback-success shadow-xs">Save {discount}%</span>}
-          <button type="button" disabled={isSaving} onClick={handleSave} className={`absolute right-3 top-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-surface-card text-content-primary shadow-xs hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${isSaved(product.id) ? 'text-feedback-error' : ''}`} aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
         </div>
       </Link>
+      <button type="button" disabled={isSaving} onClick={handleSave} className={`absolute right-3 top-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-surface-card shadow-xs hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${isSaved(product.id) ? 'text-feedback-error' : 'text-content-primary'}`} aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)} aria-busy={isSaving}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
+      </div>
       <div className="space-y-3 p-4">
+        {saveError && <p role="alert" className="text-sm text-feedback-error">{saveError}</p>}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="truncate text-xs font-medium text-content-muted">{product.category_name || 'Hoardly collection'}</p>

@@ -1,4 +1,4 @@
-import { createError } from '../middleware/errorHandler.js';
+import { updateAuthenticatedUser } from '../services/auth.js';
 
 export async function getProfile(req, res, next) {
   try {
@@ -22,8 +22,7 @@ export async function updateProfile(req, res, next) {
     if (emailChangeRequested) authUpdates.email = email;
 
     if (Object.keys(authUpdates).length) {
-      const { error } = await req.supabase.auth.updateUser(authUpdates);
-      if (error) throw createError(400, error.message || 'Account changes could not be applied. Review the details and try again.');
+      await updateAuthenticatedUser(req.authToken, authUpdates);
     }
 
     const { data, error } = await req.supabase
@@ -48,8 +47,7 @@ export async function updateProfile(req, res, next) {
 
 export async function updatePassword(req, res, next) {
   try {
-    const { error } = await req.supabase.auth.updateUser({ password: req.body.password });
-    if (error) throw createError(400, error.message || 'Password could not be updated. Review the requirements and try again.');
+    await updateAuthenticatedUser(req.authToken, { password: req.body.password });
     res.json({ message: 'Password updated successfully.' });
   } catch (error) {
     next(error);

@@ -4,6 +4,7 @@ import { Alert } from '../../components/common/Alert.jsx';
 import { Button } from '../../components/common/Button.jsx';
 import { Spinner } from '../../components/common/Spinner.jsx';
 import { formatCurrency } from '../../utils/formatters.js';
+import { AdminPagination } from '../../components/admin/AdminPagination.jsx';
 
 const emptyProduct = { name: '', slug: '', description: '', price: '', compare_at_price: '', stock_quantity: '0', sku: '', images: '', category_id: '', attributes: '{}', is_active: true };
 const fields = [
@@ -13,6 +14,8 @@ const fields = [
 
 export function AdminProductsPage() {
   const [products, setProducts] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
+  const [submittedSearch, setSubmittedSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState(null);
@@ -25,9 +28,10 @@ export function AdminProductsPage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const imageInputRef = useRef(null);
 
-  const load = async () => {
-    const [productResponse, categoryResponse] = await Promise.all([adminService.getProducts({ search }), adminService.getCategories()]);
+  const load = async (page = pagination.page, query = submittedSearch) => {
+    const [productResponse, categoryResponse] = await Promise.all([adminService.getProducts({ search: query, page }), adminService.getCategories()]);
     setProducts(productResponse.products || []);
+    setPagination(productResponse.pagination || { page: 1, totalPages: 1 });
     setCategories(categoryResponse.categories || []);
   };
 
@@ -37,6 +41,7 @@ export function AdminProductsPage() {
       .then(([productResponse, categoryResponse]) => {
         if (!active) return;
         setProducts(productResponse.products || []);
+        setPagination(productResponse.pagination || { page: 1, totalPages: 1 });
         setCategories(categoryResponse.categories || []);
       })
       .catch((requestError) => { if (active) setError(requestError.message || 'Products could not be loaded.'); })
@@ -126,6 +131,13 @@ export function AdminProductsPage() {
   };
 
   const change = (field, value) => setForm((current) => ({ ...current, [field]: value }));
+  const changePage = async (page, query = submittedSearch) => {
+    setIsLoading(true);
+    setError('');
+    try { await load(page, query); }
+    catch (requestError) { setError(requestError.message || 'Products could not be loaded.'); }
+    finally { setIsLoading(false); }
+  };
 
   return (
     <div>
@@ -145,8 +157,9 @@ export function AdminProductsPage() {
         </form>
       </section>
       <section className="mt-7" aria-labelledby="products-table-heading">
-        <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="products-table-heading" className="text-lg font-semibold text-content-primary">Catalog inventory</h2><form onSubmit={(event) => { event.preventDefault(); setIsLoading(true); load().catch((requestError) => setError(requestError.message)).finally(() => setIsLoading(false)); }} className="flex gap-2"><label className="sr-only" htmlFor="product-search">Search products</label><input id="product-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /><Button type="submit" variant="secondary">Search</Button></form></div>
+        <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="products-table-heading" className="text-lg font-semibold text-content-primary">Catalog inventory</h2><form onSubmit={(event) => { event.preventDefault(); setSubmittedSearch(search); changePage(1, search); }} className="flex gap-2"><label className="sr-only" htmlFor="product-search">Search products</label><input id="product-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="rounded-md border border-line bg-surface-card px-3 py-2 text-sm" /><Button type="submit" variant="secondary" disabled={isLoading}>Search</Button></form></div>
         {isLoading ? <div className="flex min-h-32 items-center justify-center"><Spinner /></div> : <div className="mt-4 overflow-x-auto border-y border-line"><table className="w-full min-w-[42rem] text-left text-sm"><thead><tr className="text-xs text-content-muted"><th className="py-3 pr-4 font-medium">Product</th><th className="py-3 pr-4 font-medium">Category</th><th className="py-3 pr-4 font-medium">Price</th><th className="py-3 pr-4 font-medium">Stock</th><th className="py-3 text-right font-medium">Actions</th></tr></thead><tbody className="divide-y divide-line">{products.map((product) => <tr key={product.id} className={!product.is_active ? 'opacity-60' : ''}><td className="py-3 pr-4"><p className="font-medium text-content-primary">{product.name}</p><p className="text-xs text-content-muted">{product.sku}</p></td><td className="py-3 pr-4 text-content-secondary">{product.categories?.name || 'Uncategorized'}</td><td className="py-3 pr-4 text-content-primary">{formatCurrency(product.price)}</td><td className="py-3 pr-4 text-content-secondary">{product.stock_quantity}</td><td className="py-3 text-right"><div className="flex justify-end gap-2"><Button variant="secondary" size="sm" onClick={() => startEdit(product)}>Edit</Button>{product.is_active && <Button variant="destructive" size="sm" onClick={() => archive(product)}>Archive</Button>}</div></td></tr>)}{products.length === 0 && <tr><td colSpan="5" className="py-6 text-center text-content-secondary">No products found.</td></tr>}</tbody></table></div>}
+        <AdminPagination pagination={pagination} isLoading={isLoading} onChange={changePage} />
       </section>
     </div>
   );

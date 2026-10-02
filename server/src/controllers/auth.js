@@ -1,15 +1,17 @@
-import { supabase, supabaseAdmin } from '../config/supabase.js';
+import { createPublicClient, supabaseAdmin } from '../config/supabase.js';
 import { createError } from '../middleware/errorHandler.js';
 import { config } from '../config/env.js';
+import { updateAuthenticatedUser } from '../services/auth.js';
 
 export async function register(req, res, next) {
   try {
     const { email, password, full_name, phone } = req.body;
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await createPublicClient().auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: config.clientUrl,
         data: {
           full_name,
           role: 'customer',
@@ -71,7 +73,7 @@ export async function login(req, res, next) {
   try {
     const { email, password } = req.body;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await createPublicClient().auth.signInWithPassword({
       email,
       password,
     });
@@ -103,9 +105,8 @@ export async function login(req, res, next) {
 
 export async function logout(req, res, next) {
   try {
-    if (req.supabase) {
-      await req.supabase.auth.signOut();
-    }
+    const { error } = await supabaseAdmin.auth.admin.signOut(req.authToken, 'local');
+    if (error) throw error;
     res.json({ message: 'Signed out successfully.' });
   } catch (err) {
     next(err);
@@ -117,7 +118,7 @@ export async function forgotPassword(req, res, next) {
     const { email } = req.body;
     const redirectTo = `${config.clientUrl}/reset-password`;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await createPublicClient().auth.resetPasswordForEmail(email, {
       redirectTo,
     });
 
@@ -137,17 +138,11 @@ export async function resetPassword(req, res, next) {
   try {
     const { password } = req.body;
 
-    const { data, error } = await req.supabase.auth.updateUser({
-      password,
-    });
-
-    if (error) {
-      throw createError(400, error.message || 'Password update failed. Please request a new reset link.');
-    }
+    const user = await updateAuthenticatedUser(req.authToken, { password });
 
     res.json({
       message: 'Password updated successfully. Please sign in with your new credentials.',
-      user: data.user,
+      user,
     });
   } catch (err) {
     next(err);

@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import { createError } from '../middleware/errorHandler.js';
+import { config } from '../config/env.js';
 
 const FALLBACK_CATEGORIES = [
   {
@@ -36,15 +37,16 @@ export async function getCategories(req, res, next) {
         .select('*, products(count)')
         .order('id', { ascending: true });
 
-      if (!error && data && data.length > 0) {
+      if (error) throw error;
+      if (data) {
         const formatted = data.map((c) => ({
           ...c,
           product_count: c.products?.[0]?.count || 0,
         }));
         return res.json({ categories: formatted });
       }
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!config.allowDemoCatalog) throw error;
     }
 
     res.json({ categories: FALLBACK_CATEGORIES });
@@ -62,13 +64,15 @@ export async function getCategoryBySlug(req, res, next) {
         .from('categories')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .maybeSingle();
 
-      if (!error && data) {
+      if (error) throw error;
+      if (!data) throw createError(404, 'Category not found. The category requested does not exist.');
+      if (data) {
         return res.json({ category: data });
       }
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!config.allowDemoCatalog || error.statusCode === 404) throw error;
     }
 
     const cat = FALLBACK_CATEGORIES.find((c) => c.slug === slug);

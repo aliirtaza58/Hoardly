@@ -19,6 +19,7 @@ export async function requireAuth(req, res, next) {
 
     // Create a client scoped to this user's JWT (respects RLS)
     const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
       global: {
         headers: { Authorization: `Bearer ${token}` },
       },
@@ -32,6 +33,7 @@ export async function requireAuth(req, res, next) {
 
     // Attach user and scoped client to request
     req.user = user;
+    req.authToken = token;
     req.supabase = supabase;
     next();
   } catch (err) {

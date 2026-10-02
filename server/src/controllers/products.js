@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import { createError } from '../middleware/errorHandler.js';
+import { config } from '../config/env.js';
 
 // Fallback seed catalog for local development when database is offline
 const FALLBACK_PRODUCTS = [
@@ -215,11 +216,12 @@ export async function getProducts(req, res, next) {
         .eq('is_active', true);
 
       if (category) {
-        query = query.or(`category_id.eq.${category},categories.slug.eq.${category}`);
+        query = /^\d+$/.test(category) ? query.eq('category_id', Number(category)) : query.eq('categories.slug', category);
       }
 
       if (search) {
-        query = query.ilike('name', `%${search}%`);
+        const pattern = `%${search.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}%`;
+        query = query.or(`name.ilike."${pattern}",description.ilike."${pattern}"`);
       }
 
       if (minPrice !== null && !isNaN(minPrice)) {
@@ -248,7 +250,8 @@ export async function getProducts(req, res, next) {
 
       const { data, count, error } = await query;
 
-      if (!error && data && data.length > 0) {
+      if (error) throw error;
+      if (data) {
         const formatted = data.map((item) => ({
           ...item,
           category_name: item.categories?.name,
@@ -259,13 +262,13 @@ export async function getProducts(req, res, next) {
           pagination: {
             page,
             limit,
-            total: count || formatted.length,
-            totalPages: Math.ceil((count || formatted.length) / limit),
+            total: count ?? formatted.length,
+            totalPages: Math.max(1, Math.ceil((count ?? formatted.length) / limit)),
           },
         });
       }
-    } catch {
-      // Fallback to local memory filter
+    } catch (error) {
+      if (!config.allowDemoCatalog) throw error;
     }
 
     // Fallback in-memory catalog
@@ -335,9 +338,11 @@ export async function getProductBySlug(req, res, next) {
         .select('*, categories(id, name, slug)')
         .eq('slug', slug)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
-      if (!error && data) {
+      if (error) throw error;
+      if (!data) throw createError(404, 'The requested product could not be found. It may be discontinued or unavailable.');
+      if (data) {
         return res.json({
           product: {
             ...data,
@@ -346,8 +351,8 @@ export async function getProductBySlug(req, res, next) {
           },
         });
       }
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!config.allowDemoCatalog || error.statusCode === 404) throw error;
     }
 
     const product = FALLBACK_PRODUCTS.find((p) => p.slug === slug);
@@ -372,15 +377,16 @@ export async function getProductReviews(req, res, next) {
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
-      if (!error && data) {
+      if (error) throw error;
+      if (data) {
         const formatted = data.map((r) => ({
           ...r,
           user_name: r.users?.full_name || 'Verified Customer',
         }));
         return res.json({ reviews: formatted });
       }
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!config.allowDemoCatalog) throw error;
     }
 
     const reviews = FALLBACK_REVIEWS.filter((r) => r.product_id === productId);

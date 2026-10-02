@@ -56,7 +56,7 @@ export function Navbar() {
           </Link>
         </nav>
 
-        <SearchBar className="hidden max-w-md flex-1 lg:flex" />
+        <SearchBar className="hidden min-w-0 max-w-md flex-1 xl:flex" />
 
         <div className="ml-auto flex items-center gap-3">
           <Link to="/wishlist" className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-content-primary hover:bg-surface-muted" aria-label={`Saved items${wishlistCount ? `, ${wishlistCount} saved` : ''}`}><Heart className="h-5 w-5" aria-hidden="true" />{wishlistCount > 0 && <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-brand px-1 text-xs font-semibold text-content-on-action">{wishlistCount}</span>}</Link>
@@ -73,7 +73,7 @@ export function Navbar() {
                 <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center text-content-primary border border-line">
                   <User className="w-4 h-4" aria-hidden="true" />
                 </div>
-                <span className="hidden sm:inline-block font-medium text-content-primary">
+                <span className="hidden max-w-24 truncate xl:inline-block font-medium text-content-primary">
                   {profile?.full_name || user?.email?.split('@')[0]}
                 </span>
               </Link>
@@ -84,7 +84,7 @@ export function Navbar() {
                 aria-label="Sign out of account"
               >
                 <LogOut className="w-4 h-4 mr-1" aria-hidden="true" />
-                <span className="hidden sm:inline">Sign out</span>
+                <span className="hidden xl:inline">Sign out</span>
               </Button>
             </div>
           ) : (
@@ -106,6 +106,7 @@ export function Navbar() {
           </button>
         </div>
       </div>
+      <div className="mx-auto hidden max-w-7xl px-6 pb-3 md:block xl:hidden"><SearchBar /></div>
       {isMenuOpen && (
         <div className="border-t border-line bg-surface-card px-4 py-4 md:hidden">
           <SearchBar className="mb-4" />

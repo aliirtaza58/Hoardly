@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
+import { productSearchUrl } from '../../utils/catalogNavigation.js';
 
 /**
  * Debounced search bar for the navbar.
@@ -8,26 +9,23 @@ import { Search, X } from 'lucide-react';
  */
 export function SearchBar({ className = '' }) {
   const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('search') || '');
+  const location = useLocation();
+  const [draft, setDraft] = useState(null);
+  const query = draft?.key === location.key ? draft.value : searchParams.get('search') || '';
   const navigate = useNavigate();
   const debounceRef = useRef(null);
   const inputRef = useRef(null);
 
   const executeSearch = useCallback(
     (value) => {
-      const trimmed = value.trim();
-      if (trimmed) {
-        navigate(`/products?search=${encodeURIComponent(trimmed)}`);
-      } else {
-        navigate('/products');
-      }
+      navigate(productSearchUrl(value, location.pathname === '/products' ? location.search : ''));
     },
-    [navigate]
+    [navigate, location.pathname, location.search]
   );
 
   const handleChange = (e) => {
     const value = e.target.value;
-    setQuery(value);
+    setDraft({ key: location.key, value });
 
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -39,11 +37,11 @@ export function SearchBar({ className = '' }) {
   };
 
   const handleClear = () => {
-    setQuery('');
+    setDraft({ key: location.key, value: '' });
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-    navigate('/products');
+    executeSearch('');
     inputRef.current?.focus();
   };
 
@@ -61,7 +59,7 @@ export function SearchBar({ className = '' }) {
         clearTimeout(debounceRef.current);
       }
     };
-  }, []);
+  }, [location.key]);
 
   return (
     <form
