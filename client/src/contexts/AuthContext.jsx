@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
     setIsLoading(true);
     setError(null);
     try {
-      if (import.meta.env.DEV && email.trim().toLowerCase() === DEMO_ADMIN_USERNAME && password === DEMO_ADMIN_PASSWORD) {
+      if (import.meta.env.DEV && email.trim().toLowerCase() !== 'admin' && email.trim().toLowerCase() === DEMO_ADMIN_USERNAME && password === DEMO_ADMIN_PASSWORD) {
         localStorage.setItem('auth_token', DEMO_ADMIN_TOKEN);
         setToken(DEMO_ADMIN_TOKEN);
         setUser(DEMO_ADMIN_USER);

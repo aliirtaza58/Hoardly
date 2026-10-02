@@ -28,9 +28,9 @@ export function LoginPage() {
   const validateForm = () => {
     const errors = {};
     if (!formData.email.trim()) {
-      errors.email = 'Email address is missing. An email is required to identify your account. Please enter your email address.';
-    } else if (!(import.meta.env.DEV && formData.email.trim().toLowerCase() === (import.meta.env.VITE_LOCAL_ADMIN_USERNAME || 'admin')) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      errors.email = 'Email address format is invalid. It does not match standard mailbox format. Please enter a valid address like user@example.com.';
+      errors.email = 'Enter your email address or username to identify your account.';
+    } else if (formData.email.trim().toLowerCase() !== 'admin' && !(import.meta.env.DEV && formData.email.trim().toLowerCase() === (import.meta.env.VITE_LOCAL_ADMIN_USERNAME || 'admin')) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = 'Enter a valid email address or username.';
     }
 
     if (!formData.password) {
@@ -58,8 +58,8 @@ export function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      await login(formData.email.trim(), formData.password);
-      navigate(redirectPath, { replace: true });
+      const response = await login(formData.email.trim(), formData.password);
+      navigate(location.state?.from ? redirectPath : response.user.profile?.role === 'admin' ? '/admin' : '/', { replace: true });
     } catch (err) {
       // Error is set in AuthContext and displayed in the alert
     } finally {
@@ -94,17 +94,17 @@ export function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <FormField
             id="login-email"
-            label="Email address"
+            label="Email or username"
             required
             error={formErrors.email}
           >
             <Input
               name="email"
-              type="email"
+              type="text"
               placeholder="name@example.com"
               value={formData.email}
               onChange={handleChange}
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
             />
           </FormField>

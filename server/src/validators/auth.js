@@ -21,9 +21,9 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z
-    .string({ required_error: 'Email address is required. Please provide your account email.' })
-    .email('Invalid email address format. Please enter a valid email address.'),
+  email: z.string({ required_error: 'Email or username is required.' })
+    .trim().toLowerCase()
+    .refine((value) => value === 'admin' || z.string().email().safeParse(value).success, 'Enter a valid email address or username.'),
   password: z
     .string({ required_error: 'Password is required. Please enter your account password.' })
     .min(1, 'Password cannot be empty. Please enter your password.'),

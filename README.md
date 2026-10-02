@@ -34,6 +34,20 @@ The storefront normally runs at `http://localhost:5173`; the API at `http://loca
 
 The local admin simulator is development-only and does not persist changes to Supabase. Production uses real accounts and data. The sample catalog fallback is disabled by default; `ALLOW_DEMO_CATALOG=true` enables it only for local database failures, never in production.
 
+## Administrator Setup
+
+The username `admin` is a server-side alias for `ADMIN_LOGIN_EMAIL`, which defaults to the demo address `admin@hoardly.example`. The account must authenticate with Supabase and have `public.users.role = 'admin'`; the username never bypasses authentication or grants permissions by itself. Administrators can manage the entire store, but do not receive Supabase project-owner credentials.
+
+To provision this account against the configured Supabase project, set `ADMIN_INITIAL_PASSWORD` in a private process environment and run:
+
+```sh
+npm --prefix server run setup:admin
+```
+
+This creates the Auth user or resets the password of the account matching `ADMIN_LOGIN_EMAIL`, then assigns its store-admin role. Run it manually, not during deployment or on server startup. Clear `ADMIN_INITIAL_PASSWORD` afterward; never put it in source code, client variables, or build logs. Supabase password requirements still apply.
+
+An account already provisioned in this Supabase project does not need to be recreated for Vercel. Set the same `ADMIN_LOGIN_EMAIL` on the API project. Sign out of any old local simulator session, then sign in with `admin` or the backing email. The reserved demo email cannot receive recovery messages; use an email you own and a strong unique password before using real customer data. Local simulators should use a different username, such as `local-admin`.
+
 ## Build
 
 ```sh
@@ -64,6 +78,7 @@ Set these **API project** variables:
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_ANON_KEY` | Supabase public anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase service-role key |
+| `ADMIN_LOGIN_EMAIL` | `admin@hoardly.example` for this demo, or your real admin email |
 | `RESEND_API_KEY` | Resend key, if order emails are needed |
 | `ORDER_CONFIRMATION_FROM` | Verified Resend sender, e.g. `Hoardly <orders@your-domain>` |
 

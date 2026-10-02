@@ -72,9 +72,10 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
   try {
     const { email, password } = req.body;
+    const isAdminAlias = email === 'admin';
 
     const { data, error } = await createPublicClient().auth.signInWithPassword({
-      email,
+      email: isAdminAlias ? config.adminLoginEmail : email,
       password,
     });
 
@@ -88,6 +89,10 @@ export async function login(req, res, next) {
       .select('id, email, full_name, phone, role, created_at')
       .eq('id', data.user.id)
       .single();
+
+    if (isAdminAlias && profile?.role !== 'admin') {
+      throw createError(401, 'Invalid email or password. Please verify your credentials and try again.');
+    }
 
     res.json({
       message: 'Signed in successfully.',

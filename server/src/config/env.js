@@ -8,6 +8,7 @@ export const config = {
   clientUrl: (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, ''),
   resendApiKey: process.env.RESEND_API_KEY,
   orderConfirmationFrom: process.env.ORDER_CONFIRMATION_FROM,
+  adminLoginEmail: (process.env.ADMIN_LOGIN_EMAIL || 'admin@hoardly.example').trim().toLowerCase(),
   allowDemoCatalog: !process.env.VERCEL && process.env.NODE_ENV !== 'production' && process.env.ALLOW_DEMO_CATALOG === 'true',
 };
 
