@@ -16,7 +16,7 @@ const FALLBACK_CATEGORIES = [
     name: 'Apparel',
     slug: 'apparel',
     description: 'Minimal and durable clothing crafted from sustainable premium fabrics for daily wear.',
-    image_url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1722310752951-4d459d28c678?auto=format&fit=crop&w=800&q=80',
     product_count: 2,
   },
   {

@@ -3,7 +3,7 @@
 -- 1. Categories
 insert into public.categories (id, name, slug, description, image_url) values
   (1, 'Electronics', 'electronics', 'High quality electronics and smart gadgets', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80'),
-  (2, 'Apparel', 'apparel', 'Minimal and durable clothing for everyday life', 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'),
+  (2, 'Apparel', 'apparel', 'Minimal and durable clothing for everyday life', 'https://images.unsplash.com/photo-1722310752951-4d459d28c678?auto=format&fit=crop&w=800&q=80'),
   (3, 'Home & Living', 'home-living', 'Modern home accessories and sustainable decor', 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80')
 on conflict (id) do nothing;
 
@@ -36,7 +36,7 @@ insert into public.products (id, name, slug, description, price, compare_at_pric
     149.00,
     30,
     'ELEC-KEYB-002',
-    array['https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80'],
+    array['https://images.unsplash.com/photo-1626958390916-90be78b9bfe6?auto=format&fit=crop&w=800&q=80'],
     1,
     true,
     4.7,
@@ -52,7 +52,7 @@ insert into public.products (id, name, slug, description, price, compare_at_pric
     null,
     120,
     'APP-TEE-001',
-    array['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
+    array['https://images.unsplash.com/photo-1722310752951-4d459d28c678?auto=format&fit=crop&w=800&q=80'],
     2,
     true,
     4.6,
@@ -68,7 +68,7 @@ insert into public.products (id, name, slug, description, price, compare_at_pric
     null,
     60,
     'HOME-COFF-001',
-    array['https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80'],
+    array['https://images.unsplash.com/photo-1783206695207-aa4deabafa7b?auto=format&fit=crop&w=800&q=80'],
     3,
     true,
     4.9,

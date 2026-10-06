@@ -6,6 +6,7 @@ export default {
   ],
   theme: {
     extend: {
+      spacing: { touch: 'var(--size-touch-target)' },
       colors: {
         surface: {
           page: 'var(--color-surface-page)',

@@ -53,7 +53,7 @@ export function ProductCard({ product }) {
           {discount && <span className="absolute left-3 top-3 rounded-sm bg-surface-card px-2 py-1 text-xs font-semibold text-feedback-success shadow-xs">Save {discount}%</span>}
         </div>
       </Link>
-      <button type="button" disabled={isSaving} onClick={handleSave} className={`absolute right-3 top-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full bg-surface-card shadow-xs hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${isSaved(product.id) ? 'text-feedback-error' : 'text-content-primary'}`} aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)} aria-busy={isSaving}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
+      <button type="button" disabled={isSaving} onClick={handleSave} className={`absolute right-3 top-3 inline-flex min-h-touch min-w-touch items-center justify-center rounded-full bg-surface-card shadow-xs hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${isSaved(product.id) ? 'text-feedback-error' : 'text-content-primary'}`} aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)} aria-busy={isSaving}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
       </div>
       <div className="space-y-3 p-4">
         {saveError && <p role="alert" className="text-sm text-feedback-error">{saveError}</p>}
@@ -67,7 +67,7 @@ export function ProductCard({ product }) {
           <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-content-muted transition-transform duration-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
         </div>
         <StarRating rating={product.avg_rating} reviewCount={product.review_count} />
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-lg font-bold text-content-primary">{formatCurrency(product.price)}</span>
           {product.compare_at_price && Number(product.compare_at_price) > Number(product.price) && (
             <span className="text-sm text-content-muted line-through">{formatCurrency(product.compare_at_price)}</span>

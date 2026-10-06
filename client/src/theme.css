@@ -61,6 +61,10 @@
   --space-20: 80px;
   --space-24: 96px;
 
+  /* Controls */
+  --size-touch-target: 44px;
+  --height-mobile-header: calc(var(--space-16) + var(--size-touch-target) + var(--space-3));
+
   /* Radius */
   --radius-sm: 4px;
   --radius-md: 8px;

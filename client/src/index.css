@@ -9,6 +9,7 @@
     font-family: var(--font-sans);
     color: var(--color-text-primary);
     background-color: var(--color-surface-page);
+    scroll-padding-top: var(--height-mobile-header);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -26,5 +27,38 @@
   :focus-visible {
     outline: 2px solid var(--color-border-focus);
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .mobile-navigation {
+    max-height: calc(100dvh - var(--height-mobile-header));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Keep native form controls readable on phones and prevent focus zoom. */
+  input:not([type='checkbox']):not([type='radio']), select[class], textarea[class] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  input:not([type='checkbox']):not([type='radio']), select {
+    min-height: var(--size-touch-target);
+  }
+
+  button {
+    min-height: var(--size-touch-target);
+  }
+}
+
+/* Form text stays readable even when a component requests a smaller size. */
+input:not([type='checkbox']):not([type='radio']), select[class], textarea[class] {
+  font-size: var(--text-base);
+}
+
+@screen sm {
+  input:not([type='checkbox']):not([type='radio']), select[class], textarea[class] {
+    font-size: var(--text-sm);
   }
 }

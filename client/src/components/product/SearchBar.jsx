@@ -66,7 +66,7 @@ export function SearchBar({ className = '' }) {
       onSubmit={handleSubmit}
       role="search"
       aria-label="Search products"
-      className={`relative flex items-center ${className}`}
+      className={`relative flex min-w-0 items-center ${className}`}
     >
       <div className="absolute left-3 pointer-events-none text-content-muted">
         <Search className="w-4 h-4" aria-hidden="true" />
@@ -79,13 +79,13 @@ export function SearchBar({ className = '' }) {
         onChange={handleChange}
         placeholder="Search products..."
         aria-label="Search products by name or description"
-        className="w-full pl-9 pr-8 py-2 text-sm bg-surface-muted border border-line rounded-md placeholder:text-content-muted text-content-primary focus:border-line-focus focus:ring-2 focus:ring-brand/20 outline-none transition-all duration-fast"
+        className="min-h-touch min-w-0 w-full pl-9 pr-12 py-2 text-sm bg-surface-muted border border-line rounded-md placeholder:text-content-muted text-content-primary focus:border-line-focus focus:ring-2 focus:ring-brand/20 outline-none transition-all duration-fast"
       />
       {query && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-2.5 p-0.5 rounded-sm text-content-muted hover:text-content-primary cursor-pointer"
+          className="absolute right-0 inline-flex h-touch w-touch items-center justify-center rounded-md text-content-muted hover:text-content-primary cursor-pointer"
           aria-label="Clear search query"
         >
           <X className="w-3.5 h-3.5" aria-hidden="true" />

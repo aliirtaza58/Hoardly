@@ -127,3 +127,13 @@ Use Node.js 24, the Vite framework preset, and an empty Root Directory. Producti
 Supabase Auth Site URL is configured as `https://hoardly-sigma.vercel.app`, with that origin and `https://hoardly-sigma.vercel.app/reset-password` allowed as redirects. If the production domain changes, update `CLIENT_URL` and these Auth URLs together. Apply the database migrations in filename order, including cancellation stock restoration and deployment function permissions. Auth email delivery requires appropriate Supabase SMTP configuration; order confirmation email through Resend remains optional.
 
 Do not set local simulator credentials on Vercel. The service-role key belongs only to server environment variables and must never use a `VITE_` prefix.
+
+### Catalog photos
+
+The catalog uses illustrative Unsplash photographs. These identify the product type; production stock should use the merchant's own photos for the exact item sold.
+
+- Cotton tee and Apparel: [Jonathan Mattson](https://unsplash.com/photos/a-white-t-shirt-hanging-on-a-white-wall-fiA7sq2PdnQ).
+- Mechanical keyboard: [Michelle Ding](https://unsplash.com/photos/black-and-red-computer-keyboard-c7yBhz9XTIs).
+- Ceramic dripper: [Madeline Liu](https://unsplash.com/photos/black-ceramic-coffee-dripper-on-a-clear-glass-carafe-ed4DYzyS96s).
+
+For an existing database with the original sample images, run `database/catalog-image-corrections.sql` once. The script only replaces the old image values and duplicated keyboard title, preserving later admin edits.

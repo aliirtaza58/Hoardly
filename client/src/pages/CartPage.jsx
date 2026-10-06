@@ -27,7 +27,7 @@ export function CartPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-7"><div><p className="text-sm font-semibold text-content-link">Your selection</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-content-primary">Shopping cart</h1></div><Button variant="link" size="sm" onClick={clearCart} className="text-feedback-error">Clear cart</Button></div>
       {error && <Alert variant="error" title="Your cart needs attention" className="mt-6">{error}</Alert>}
-      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]"><section>{items.map((item) => <CartItem key={item.id} item={item} onUpdate={updateQuantity} onRemove={removeFromCart} />)}</section><CartSummary subtotal={subtotal} itemCount={count} /></div>
+      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]"><section>{items.map((item) => <CartItem key={item.id} item={item} onUpdate={updateQuantity} onRemove={removeFromCart} />)}</section><CartSummary subtotal={subtotal} itemCount={count} /></div>
     </div>
   );
 }

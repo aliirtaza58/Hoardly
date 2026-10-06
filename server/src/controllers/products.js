@@ -41,7 +41,7 @@ const FALLBACK_PRODUCTS = [
     stock_quantity: 30,
     sku: 'ELEC-KEYB-002',
     images: [
-      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1626958390916-90be78b9bfe6?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80',
     ],
     category_id: 1,
@@ -67,7 +67,7 @@ const FALLBACK_PRODUCTS = [
     stock_quantity: 120,
     sku: 'APP-TEE-001',
     images: [
-      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1722310752951-4d459d28c678?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80',
     ],
     category_id: 2,
@@ -94,7 +94,7 @@ const FALLBACK_PRODUCTS = [
     stock_quantity: 60,
     sku: 'HOME-COFF-001',
     images: [
-      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1783206695207-aa4deabafa7b?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
     ],
     category_id: 3,

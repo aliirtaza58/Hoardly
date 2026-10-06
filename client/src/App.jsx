@@ -52,6 +52,7 @@ function RouteMetadata() {
   useEffect(() => {
     const [, title, description] = metadata.find(([pattern]) => pattern.test(pathname)) || ['', 'Page Not Found | Hoardly', 'The requested page could not be found.'];
     document.title = title;
+    window.scrollTo(0, 0);
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
   }, [pathname]);
   return null;
@@ -90,7 +91,7 @@ export default function App() {
         <div className="min-h-screen flex flex-col bg-surface-page text-content-primary">
           <Navbar />
           <RouteMetadata />
-          <main className="flex-1">
+          <main className="min-w-0 flex-1">
             <Suspense fallback={<RouteLoading />}>
               <Routes>
               <Route path="/" element={<HomePage />} />
