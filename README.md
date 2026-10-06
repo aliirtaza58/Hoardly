@@ -2,6 +2,10 @@
 
 Hoardly is a full-stack e-commerce application built with a React/Vite storefront, an Express API, and Supabase for authentication, database, and file storage. Orders use cash on delivery.
 
+**Live app:** [hoardly-sigma.vercel.app](https://hoardly-sigma.vercel.app)
+
+The storefront and Express API are live in one Vercel project. API requests use `/api` on the same origin.
+
 ## Features
 
 ### Storefront
@@ -28,6 +32,7 @@ Hoardly is a full-stack e-commerce application built with a React/Vite storefron
 | API | Node.js, Express |
 | Data and authentication | Supabase Auth, Postgres, Storage |
 | Email | Resend (optional) |
+| Hosting | Vercel: storefront and API in one deployment |
 
 ## Local Development
 
@@ -94,6 +99,7 @@ The local administrator simulator is development-only and does not persist chang
 ## Project Structure
 
 ```text
+api/          Vercel entrypoint for the Express API
 client/       React storefront
 server/       Express API
 database/     Supabase migrations and optional seed data
@@ -101,7 +107,9 @@ database/     Supabase migrations and optional seed data
 
 ## Vercel Deployment
 
-Deploy the repository root as one Vercel project. The root `vercel.json` installs both lockfile-based packages, builds the storefront into `client/dist`, and routes `/api/*` to the Express function in `api/index.js`. All other page routes load the React storefront.
+The production Vercel project is `hoardly`, connected to this repository's `main` branch. Changes pushed to `main` deploy automatically to [the live app](https://hoardly-sigma.vercel.app).
+
+The repository root deploys as one Vercel project. The root `vercel.json` installs both lockfile-based packages, builds the storefront into `client/dist`, and routes `/api/*` to the Express function in `api/index.js`. All other page routes load the React storefront.
 
 Use Node.js 24, the Vite framework preset, and an empty Root Directory. Production environment variables:
 
@@ -113,9 +121,9 @@ Use Node.js 24, the Vite framework preset, and an empty Root Directory. Producti
 | `SUPABASE_URL` | Same Supabase project URL |
 | `SUPABASE_ANON_KEY` | Same Supabase anon/publishable key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only privileged key |
-| `CLIENT_URL` | Production HTTPS origin |
+| `CLIENT_URL` | `https://hoardly-sigma.vercel.app` |
 | `ADMIN_LOGIN_EMAIL` | Email backing the `admin` username |
 
-Set Supabase Auth Site URL to the production origin and allow that origin plus `/reset-password` as redirects. Apply the database migrations in filename order, including cancellation stock restoration and deployment function permissions. Auth email delivery requires appropriate Supabase SMTP configuration; order confirmation email through Resend remains optional.
+Supabase Auth Site URL is configured as `https://hoardly-sigma.vercel.app`, with that origin and `https://hoardly-sigma.vercel.app/reset-password` allowed as redirects. If the production domain changes, update `CLIENT_URL` and these Auth URLs together. Apply the database migrations in filename order, including cancellation stock restoration and deployment function permissions. Auth email delivery requires appropriate Supabase SMTP configuration; order confirmation email through Resend remains optional.
 
 Do not set local simulator credentials on Vercel. The service-role key belongs only to server environment variables and must never use a `VITE_` prefix.
