@@ -98,3 +98,24 @@ client/       React storefront
 server/       Express API
 database/     Supabase migrations and optional seed data
 ```
+
+## Vercel Deployment
+
+Deploy the repository root as one Vercel project. The root `vercel.json` installs both lockfile-based packages, builds the storefront into `client/dist`, and routes `/api/*` to the Express function in `api/index.js`. All other page routes load the React storefront.
+
+Use Node.js 24, the Vite framework preset, and an empty Root Directory. Production environment variables:
+
+| Variable | Value |
+| --- | --- |
+| `VITE_API_URL` | `/api` |
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon/publishable key |
+| `SUPABASE_URL` | Same Supabase project URL |
+| `SUPABASE_ANON_KEY` | Same Supabase anon/publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only privileged key |
+| `CLIENT_URL` | Production HTTPS origin |
+| `ADMIN_LOGIN_EMAIL` | Email backing the `admin` username |
+
+Set Supabase Auth Site URL to the production origin and allow that origin plus `/reset-password` as redirects. Apply the database migrations in filename order, including cancellation stock restoration and deployment function permissions. Auth email delivery requires appropriate Supabase SMTP configuration; order confirmation email through Resend remains optional.
+
+Do not set local simulator credentials on Vercel. The service-role key belongs only to server environment variables and must never use a `VITE_` prefix.

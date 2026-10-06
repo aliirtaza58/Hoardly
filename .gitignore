@@ -49,3 +49,5 @@ diagnostic_output.txt
 
 # Agentic context and tracking files
 .agents/
+
+supabase/.temp/

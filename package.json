@@ -11,5 +11,8 @@
     "test": "npm --prefix server test",
     "lint": "npm --prefix client run lint"
   },
-  "engines": { "node": "24.x" }
+  "engines": {
+    "node": "24.x"
+  },
+  "type": "module"
 }

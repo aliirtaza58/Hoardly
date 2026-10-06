@@ -26,12 +26,14 @@ const developmentOrigins = process.env.VERCEL || process.env.NODE_ENV === 'produ
   : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174'];
 const allowedOrigins = new Set([config.clientUrl, ...developmentOrigins]);
 
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+app.use(cors((req, callback) => {
+  const origin = req.get('origin');
+  // Preview storefronts call the API on their own deployment origin too.
+  const sameDeployment = process.env.VERCEL && origin === 'https://' + req.get('host');
+  if (origin && !allowedOrigins.has(origin) && !sameDeployment) {
     return callback(new Error('Origin is not allowed by CORS.'));
-  },
-  credentials: true,
+  }
+  callback(null, { origin: true, credentials: true });
 }));
 app.use(express.json());
 

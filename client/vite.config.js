@@ -8,8 +8,9 @@ export default defineConfig(({ command, mode }) => {
     for (const name of ['VITE_API_URL', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']) {
       if (!env[name]) throw new Error(`Missing required build environment variable: ${name}.`);
     }
-    if (process.env.VERCEL && (!env.VITE_API_URL.startsWith('https://') || !env.VITE_SUPABASE_URL.startsWith('https://'))) {
-      throw new Error('Hosted API and Supabase URLs must use HTTPS.');
+    const sameOriginApi = env.VITE_API_URL === '/api';
+    if (process.env.VERCEL && ((!sameOriginApi && !env.VITE_API_URL.startsWith('https://')) || !env.VITE_SUPABASE_URL.startsWith('https://'))) {
+      throw new Error('Hosted API must use /api or HTTPS, and Supabase must use HTTPS.');
     }
   }
   return { plugins: [react()] };
