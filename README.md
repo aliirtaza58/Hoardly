@@ -6,6 +6,28 @@ Hoardly is a full-stack e-commerce application built with a React/Vite storefron
 
 The storefront and Express API are live in one Vercel project. API requests use `/api` on the same origin.
 
+## Screenshots
+
+Actual screenshots from the live deployment. The catalog products, prices, and rating summaries are demonstration data.
+
+### Homepage
+
+![Hoardly homepage with featured collections](listing-assets/screenshots-2026-10-07/01-homepage.jpg)
+
+| Product catalog | Product details |
+| --- | --- |
+| ![Product catalog with search, filters, and product cards](listing-assets/screenshots-2026-10-07/02-product-catalog.jpg) | ![Headphones product page with price, stock, and add-to-cart controls](listing-assets/screenshots-2026-10-07/03-product-details.jpg) |
+
+| Categories | Account sign-in |
+| --- | --- |
+| ![Browse electronics, apparel, and home categories](listing-assets/screenshots-2026-10-07/04-categories.jpg) | ![Customer account sign-in page](listing-assets/screenshots-2026-10-07/05-account-sign-in.jpg) |
+
+### Mobile catalog
+
+<img src="listing-assets/screenshots-2026-10-07/06-mobile-catalog.jpg" alt="Mobile product catalog showing Cotton search results and collapsible filters" width="300">
+
+Desktop captures: 7 October 2026. Mobile capture: 6 October 2026. See the [screenshot notes](listing-assets/screenshots-2026-10-07/README.md) for source pages.
+
 ## Features
 
 ### Storefront
