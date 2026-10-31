@@ -31,31 +31,31 @@ export function Button({
 
   // Base sizing tokens
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-xs rounded-sm gap-1.5',
-    md: 'px-4 py-2.5 text-sm rounded-md gap-2 font-medium',
-    lg: 'px-6 py-3 text-base rounded-md gap-2.5 font-semibold',
-  }[size] || 'px-4 py-2.5 text-sm rounded-md gap-2 font-medium';
+    sm: 'px-3 py-1.5 text-sm rounded-control gap-1.5 font-semibold',
+    md: 'min-h-touch px-4 py-2.5 text-sm rounded-control gap-2 font-semibold',
+    lg: 'min-h-touch px-6 py-3 text-base rounded-control gap-2.5 font-semibold',
+  }[size] || 'px-4 py-2.5 text-sm rounded-control gap-2 font-semibold';
 
   // Variant classes mapping to semantic tokens
   const variantClasses = {
     primary: [
-      'bg-brand text-content-on-action shadow-xs',
-      'hover:bg-brand-hover',
+      'bg-ink text-paper border border-ink',
+      'hover:bg-ink-2 hover:border-ink-2',
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
-      'active:bg-brand-active',
-      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand',
+      'active:translate-y-px',
+      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-ink',
     ].join(' '),
 
     secondary: [
-      'bg-surface-card text-content-primary border border-line shadow-xs',
-      'hover:bg-surface-muted hover:border-line-strong',
+      'bg-paper-2 text-ink border border-rule',
+      'hover:bg-paper-3 hover:border-line-strong',
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
-      'active:bg-surface-muted',
-      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-surface-card',
+      'active:translate-y-px',
+      'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-paper-2',
     ].join(' '),
 
     destructive: [
-      'bg-destructive text-content-on-action shadow-xs',
+      'bg-destructive text-paper border border-destructive',
       'hover:bg-destructive-hover',
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-error',
       'active:bg-destructive-active',
@@ -63,16 +63,16 @@ export function Button({
     ].join(' '),
 
     ghost: [
-      'bg-transparent text-content-primary',
-      'hover:bg-surface-muted',
+      'bg-transparent text-ink',
+      'hover:bg-paper-2',
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
       'active:bg-surface-muted',
       'disabled:opacity-50 disabled:cursor-not-allowed',
     ].join(' '),
 
     link: [
-      'bg-transparent text-content-link p-0 inline-flex items-center',
-      'hover:underline',
+      'bg-transparent text-ink p-0 inline-flex items-center underline underline-offset-4 decoration-1',
+      'hover:decoration-accent',
       'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
       'active:opacity-80',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline',
@@ -83,7 +83,7 @@ export function Button({
   const errorClasses = hasError ? 'ring-2 ring-feedback-error border-feedback-error' : '';
 
   // Selected state modification
-  const selectedClasses = isSelected ? 'ring-2 ring-brand font-bold bg-brand/10' : '';
+  const selectedClasses = isSelected ? '!bg-ink !text-paper !border-ink' : '';
 
   return (
     <button
@@ -94,7 +94,7 @@ export function Button({
       aria-busy={isLoading}
       aria-pressed={isSelected ? true : undefined}
       aria-label={ariaLabel}
-      className={`inline-flex items-center justify-center transition-all duration-normal cursor-pointer select-none ${sizeClasses} ${variantClasses} ${errorClasses} ${selectedClasses} ${className}`}
+      className={`inline-flex items-center justify-center transition-[background-color,border-color,color,transform] duration-fast cursor-pointer select-none ${sizeClasses} ${variantClasses} ${errorClasses} ${selectedClasses} ${className}`}
       {...props}
     >
       {isLoading ? (

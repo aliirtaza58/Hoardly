@@ -22,11 +22,11 @@ export function FormField({
       {label && (
         <label
           htmlFor={id}
-          className="text-xs font-semibold text-content-secondary tracking-wide flex items-center justify-between"
+          className="text-sm font-semibold text-ink flex items-center justify-between"
         >
           <span>{label}</span>
           {required && (
-            <span className="text-feedback-error text-xs" aria-hidden="true">
+            <span className="text-muted text-sm font-normal" aria-hidden="true">
               *
             </span>
           )}
@@ -48,12 +48,12 @@ export function FormField({
           id={errorId}
           role="alert"
           aria-live="polite"
-          className="text-xs text-feedback-error font-medium transition-all duration-fast"
+          className="text-sm text-feedback-error font-semibold"
         >
           {error}
         </p>
       ) : helperText ? (
-        <p id={helperId} className="text-xs text-content-muted">
+        <p id={helperId} className="text-sm text-muted">
           {helperText}
         </p>
       ) : null}
