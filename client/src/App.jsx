@@ -59,7 +59,7 @@ function RouteMetadata() {
 }
 
 function RouteLoading() {
-  return <div className="flex min-h-96 items-center justify-center" role="status" aria-live="polite"><span className="text-sm text-content-secondary">Loading page...</span></div>;
+  return <div className="flex min-h-96 items-center justify-center" role="status" aria-live="polite"><span className="text-sm text-muted">Loading page...</span></div>;
 }
 
 class AppErrorBoundary extends React.Component {
@@ -75,7 +75,7 @@ class AppErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-start justify-center px-6"><h1 className="text-2xl font-bold text-content-primary">This page could not load.</h1><p className="mt-3 text-sm leading-6 text-content-secondary">The page hit an unexpected problem. Reload to try again.</p><button type="button" onClick={() => window.location.reload()} className="mt-5 min-h-10 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-content-on-action hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus">Reload page</button></main>;
+      return <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-start justify-center px-6"><h1 className="text-section">This page could not load.</h1><p className="mt-3 text-sm leading-6 text-content-secondary">The page hit an unexpected problem. Reload to try again.</p><button type="button" onClick={() => window.location.reload()} className="mt-5 min-h-touch rounded-control bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-ink-2">Reload page</button></main>;
     }
     return this.props.children;
   }
