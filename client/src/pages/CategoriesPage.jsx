@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { productsService } from '../services/products.js';
 import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
@@ -19,11 +18,27 @@ export function CategoriesPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="max-w-2xl"><p className="text-sm font-semibold text-content-link">Shop by category</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-content-primary">A home for the things you need.</h1><p className="mt-3 text-base leading-7 text-content-secondary">Explore the collections built around real routines, not endless scrolling.</p></div>
+      <div className="max-w-2xl"><h1 className="text-section font-bold text-ink">Shop by category</h1><p className="mt-3 text-ink-2">Explore the collections built around real routines, not endless scrolling.</p></div>
       <div className="mt-8">
-        {isLoading && <div className="flex min-h-64 items-center justify-center"><Spinner size="lg" /><span className="ml-3 text-sm text-content-secondary">Loading categories...</span></div>}
+        {isLoading && <div className="flex min-h-64 items-center justify-center" role="status"><Spinner size="lg" /><span className="ml-3 text-sm text-ink-2">Loading categories...</span></div>}
         {error && <Alert variant="error" title="Could not load categories">{error}</Alert>}
-        {!isLoading && !error && <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{categories.map((category) => <Link key={category.id} to={`/products?category=${category.slug}`} className="group overflow-hidden rounded-lg border border-line bg-surface-card shadow-xs transition-shadow duration-normal hover:shadow-md"><div className="aspect-[16/10] overflow-hidden bg-surface-muted">{category.image_url && <img src={category.image_url} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-slow group-hover:scale-105" />}</div><div className="p-5"><div className="flex items-start justify-between gap-3"><h2 className="text-lg font-semibold text-content-primary">{category.name}</h2><ArrowRight className="h-4 w-4 shrink-0 text-content-muted transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" /></div><p className="mt-2 text-sm leading-6 text-content-secondary">{category.description}</p><p className="mt-4 text-sm font-semibold text-content-link">{category.product_count} products</p></div></Link>)}</div>}
+        {!isLoading && !error && (categories.length ? (
+          <ul className="ruled">
+            {categories.map((category) => (
+              <li key={category.id}>
+                <Link to={`/products?category=${category.slug}`} className="group grid grid-cols-[6rem_minmax(0,1fr)] items-center gap-4 py-4 no-underline sm:grid-cols-[10rem_minmax(0,1fr)_auto] sm:gap-6">
+                  <div className="photo aspect-[4/3] overflow-hidden bg-paper-3">{category.image_url && <img src={category.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />}</div>
+                  <div className="min-w-0">
+                    <h2 className="text-title font-bold text-ink group-hover:underline group-hover:decoration-accent">{category.name}</h2>
+                    <p className="mt-1 text-sm font-normal text-ink-2">{category.description}</p>
+                    <p className="mt-2 text-sm font-normal tabular-nums text-muted sm:hidden">{category.product_count} products</p>
+                  </div>
+                  <span className="tag hidden tabular-nums sm:inline-flex">{category.product_count} products</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="border-t border-ink py-6 text-ink-2">No categories yet.</p>)}
       </div>
     </div>
   );

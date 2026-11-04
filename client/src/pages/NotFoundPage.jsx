@@ -1,28 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/common/Button.jsx';
-import { Compass } from 'lucide-react';
 
 export function NotFoundPage() {
   return (
-    <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center px-4 py-16 text-center">
-      <div className="max-w-md space-y-6">
-        <div className="inline-flex w-16 h-16 rounded-full bg-surface-muted text-content-primary items-center justify-center border border-line">
-          <Compass className="w-8 h-8 text-content-secondary" aria-hidden="true" />
+    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+      <div className="max-w-xl border-t border-ink pt-6">
+        <h1 className="text-section font-bold text-ink">Page not found</h1>
+        <p className="mt-3 text-ink-2">
+          The resource you requested could not be located. It may have moved or no longer exists.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link to="/" className="inline-flex min-h-touch items-center justify-center rounded-control border border-ink bg-ink px-6 py-3 font-semibold text-paper no-underline transition-colors duration-fast hover:border-ink-2 hover:bg-ink-2">Return to homepage</Link>
+          <Link to="/products" className="inline-flex min-h-touch items-center justify-center rounded-control border border-rule bg-paper-2 px-6 py-3 font-semibold text-ink no-underline transition-colors duration-fast hover:bg-paper-3">Browse products</Link>
         </div>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-content-primary">
-            Page not found
-          </h1>
-          <p className="text-sm text-content-secondary leading-relaxed">
-            The resource you requested could not be located. It may have moved or no longer exists.
-          </p>
-        </div>
-        <Link to="/">
-          <Button variant="primary" size="lg">
-            Return to homepage
-          </Button>
-        </Link>
       </div>
     </div>
   );
