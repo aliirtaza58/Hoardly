@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
 import { formatCurrency } from '../../utils/formatters.js';
 
@@ -33,11 +33,25 @@ export function CartItem({ item, onUpdate, onRemove }) {
     }
   };
 
+  const stepper = 'inline-flex min-h-touch min-w-touch items-center justify-center text-ink transition-colors hover:bg-paper-2 disabled:cursor-not-allowed disabled:opacity-40';
+
   return (
-    <article className="grid grid-cols-[5rem_minmax(0,1fr)] items-start gap-4 border-b border-line py-5 sm:grid-cols-[7rem_minmax(0,1fr)_auto]">
-      <Link to={`/products/${product.slug}`} className="aspect-square w-full overflow-hidden rounded-md bg-surface-muted"><img src={product.images?.[0]} alt={product.name} className="h-full w-full object-cover" /></Link>
-      <div className="min-w-0"><p className="text-xs font-medium text-content-muted">{product.category_name || 'Hoardly collection'}</p><Link to={`/products/${product.slug}`} className="mt-1 block text-base font-semibold text-content-primary hover:text-content-link">{product.name}</Link><p className="mt-2 text-sm font-semibold text-content-primary">{formatCurrency(product.price)}</p><div className="mt-4 inline-flex items-center rounded-md border border-line"><button type="button" disabled={isUpdating || item.quantity <= 1} onClick={() => updateQuantity(item.quantity - 1)} className="inline-flex min-h-touch min-w-touch items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Decrease quantity of ${product.name}`}><Minus className="h-4 w-4" aria-hidden="true" /></button><span className="w-9 text-center text-sm font-semibold" aria-live="polite">{item.quantity}</span><button type="button" disabled={isUpdating || item.quantity >= product.stock_quantity} onClick={() => updateQuantity(item.quantity + 1)} className="inline-flex min-h-touch min-w-touch items-center justify-center text-content-secondary hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50" aria-label={`Increase quantity of ${product.name}`}><Plus className="h-4 w-4" aria-hidden="true" /></button></div>{error && <p className="mt-2 text-xs text-feedback-error">{error}</p>}</div>
-      <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:items-start sm:flex-col sm:items-end"><p className="text-base font-bold text-content-primary">{formatCurrency(Number(product.price || 0) * item.quantity)}</p><Button variant="ghost" size="sm" isLoading={isUpdating} onClick={remove} className="text-feedback-error hover:bg-destructive/10 hover:text-feedback-error"><Trash2 className="h-4 w-4" aria-hidden="true" /><span>Remove</span></Button></div>
+    <article className="grid grid-cols-[5rem_minmax(0,1fr)] items-start gap-x-4 gap-y-3 py-5 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
+      <Link to={`/products/${product.slug}`} className="photo block aspect-square w-20 overflow-hidden bg-paper-2"><img src={product.images?.[0]} alt={product.name} className="h-full w-full object-cover" /></Link>
+      <div className="min-w-0">
+        <Link to={`/products/${product.slug}`} className="block font-semibold text-ink no-underline hover:underline hover:decoration-accent">{product.name}</Link>
+        <p className="mt-1 text-sm text-ink-2">{formatCurrency(product.price)} each</p>
+        <div className="mt-3 inline-flex items-center overflow-hidden rounded-control border border-rule bg-paper">
+          <button type="button" disabled={isUpdating || item.quantity <= 1} onClick={() => updateQuantity(item.quantity - 1)} className={stepper} aria-label={`Decrease quantity of ${product.name}`}><Minus className="h-4 w-4" aria-hidden="true" /></button>
+          <span className="w-10 text-center font-mono text-sm tabular-nums" aria-live="polite">{item.quantity}</span>
+          <button type="button" disabled={isUpdating || item.quantity >= product.stock_quantity} onClick={() => updateQuantity(item.quantity + 1)} className={stepper} aria-label={`Increase quantity of ${product.name}`}><Plus className="h-4 w-4" aria-hidden="true" /></button>
+        </div>
+        {error && <p className="mt-2 text-sm text-feedback-error" role="alert">{error}</p>}
+      </div>
+      <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end">
+        <p className="font-display text-lg font-bold tabular-nums text-ink">{formatCurrency(Number(product.price || 0) * item.quantity)}</p>
+        <Button variant="link" size="sm" isLoading={isUpdating} onClick={remove} className="min-h-touch text-ink-2">Remove</Button>
+      </div>
     </article>
   );
 }
