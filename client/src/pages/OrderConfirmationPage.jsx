@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
 import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
@@ -24,17 +23,22 @@ export function OrderConfirmationPage() {
     return () => { active = false; };
   }, [id, state]);
 
-  if (isLoading) return <div className="flex min-h-96 items-center justify-center"><Spinner size="lg" /><span className="ml-3 text-sm text-content-secondary">Loading confirmation...</span></div>;
-  if (error || !order) return <div className="mx-auto max-w-2xl px-4 py-12"><Alert variant="error" title="Could not load your confirmation">{error || 'The order is unavailable.'}</Alert><Link to="/orders" className="mt-5 inline-block text-sm font-semibold text-content-link">View order history</Link></div>;
+  if (isLoading) return <div className="flex min-h-96 items-center justify-center" role="status"><Spinner size="lg" /><span className="ml-3 text-ink-2">Loading confirmation...</span></div>;
+  if (error || !order) return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><Alert variant="error" title="Could not load your confirmation">{error || 'The order is unavailable.'}</Alert><Link to="/orders" className="link mt-4 inline-flex min-h-touch items-center">View order history</Link></div>;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
-      <CheckCircle2 className="mx-auto h-12 w-12 text-feedback-success" aria-hidden="true" />
-      <p className="mt-6 text-sm font-semibold text-content-link">Order confirmed</p>
-      <h1 className="mt-2 text-3xl font-bold text-content-primary">Thanks for your order.</h1>
-      <p className="mt-4 text-sm leading-6 text-content-secondary">Order {order.order_number} has been placed. We will keep you updated as it is prepared.</p>
-      <div className="mt-8 rounded-lg border border-line bg-surface-card p-5 text-left"><div className="flex justify-between text-sm text-content-secondary"><span>Order total</span><span className="font-semibold text-content-primary">{formatCurrency(order.total)}</span></div><div className="mt-3 flex justify-between text-sm text-content-secondary"><span>Payment</span><span>Cash on delivery</span></div></div>
-      <div className="mt-8 flex flex-wrap justify-center gap-3"><Link to={`/orders/${order.id}`}><Button variant="secondary">View order details</Button></Link><Link to="/products"><Button>Continue shopping</Button></Link></div>
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="max-w-2xl">
+        <div className="border-b border-ink pb-6"><h1 className="text-section">Thanks for your order.</h1><p className="mt-3 text-lead text-ink-2">Order <span className="font-mono text-ink">{order.order_number}</span> has been placed. We will keep you updated as it is prepared.</p></div>
+        <dl className="ruled mt-8">
+          <div className="flex justify-between gap-4 py-3"><dt className="text-ink-2">Order number</dt><dd className="font-mono">{order.order_number}</dd></div>
+          <div className="flex justify-between gap-4 py-3"><dt className="text-ink-2">Order total</dt><dd className="font-display font-bold tabular-nums">{formatCurrency(order.total)}</dd></div>
+          <div className="flex justify-between gap-4 py-3"><dt className="text-ink-2">Payment</dt><dd>Cash on delivery</dd></div>
+        </dl>
+        <h2 className="mt-8 text-title">What happens next</h2>
+        <p className="mt-2 text-ink-2">We prepare your order and update its status in your order history. Pay in cash when it is delivered.</p>
+        <div className="mt-8 flex flex-wrap gap-3"><Link to={`/orders/${order.id}`} className="no-underline"><Button variant="secondary">View order details</Button></Link><Link to="/products" className="no-underline"><Button>Continue shopping</Button></Link></div>
+      </div>
     </div>
   );
 }

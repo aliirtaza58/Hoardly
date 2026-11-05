@@ -17,8 +17,8 @@ export function ProtectedRoute({ children, requireAdmin = false }) {
         role="status"
         aria-live="polite"
       >
-        <Spinner size="lg" className="text-brand" />
-        <p className="text-sm text-content-secondary">Verifying authentication status...</p>
+        <Spinner size="lg" className="text-ink" />
+        <p className="text-ink-2">Verifying authentication status...</p>
       </div>
     );
   }

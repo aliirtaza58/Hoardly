@@ -8,6 +8,8 @@ import { CartSummary } from '../components/cart/CartSummary.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
+import { FormField } from '../components/common/FormField.jsx';
+import { Input } from '../components/common/Input.jsx';
 
 const initialAddress = { full_name: '', phone: '', address_line1: '', address_line2: '', city: '', state: '', postal_code: '', country: '' };
 const labels = { full_name: 'Full name', phone: 'Phone', address_line1: 'Address line 1', address_line2: 'Address line 2', city: 'City', state: 'State or province', postal_code: 'Postal code', country: 'Country' };
@@ -89,29 +91,40 @@ export function CheckoutPage() {
   };
 
   if (authLoading || (isAuthenticated && cartLoading)) {
-    return <div className="flex min-h-96 items-center justify-center"><Spinner size="lg" /><span className="ml-3 text-sm text-content-secondary">Preparing checkout...</span></div>;
+    return <div className="flex min-h-96 items-center justify-center" role="status"><Spinner size="lg" /><span className="ml-3 text-ink-2">Preparing checkout...</span></div>;
   }
   if (!isAuthenticated) return null;
   if (!items.length) {
-    return <div className="mx-auto max-w-2xl px-4 py-16 text-center"><h1 className="text-3xl font-bold text-content-primary">Your cart is empty.</h1><Link to="/products" className="mt-5 inline-block text-sm font-semibold text-content-link">Browse products</Link></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><div className="border-b border-ink pb-6"><h1 className="text-section">Your cart is empty.</h1></div><Link to="/products" className="link mt-4 inline-flex min-h-touch items-center">Browse products</Link></div>;
   }
 
   const appliedDiscount = discount && Math.abs(Number(discount.subtotal || subtotal) - subtotal) < 0.01 ? Number(discount.amount) : 0;
+  const autoCompleteFor = (name) => (name === 'full_name' ? 'name' : name === 'phone' ? 'tel' : name === 'address_line1' ? 'address-line1' : name === 'postal_code' ? 'postal-code' : 'on');
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="border-b border-line pb-8"><p className="text-sm font-semibold text-content-link">Secure checkout</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-content-primary">Delivery details</h1></div>
-      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <form onSubmit={submit} className="rounded-lg border border-line min-w-0 bg-surface-card p-4 sm:p-6">
-          <h2 className="text-lg font-semibold text-content-primary">Where should we deliver?</h2>
-          {addresses.length > 0 && <label className="mt-5 block text-sm font-medium text-content-primary">Saved address<select value={selectedAddress} onChange={(event) => selectAddress(event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm"><option value="">Use a different address</option>{addresses.map((item) => <option key={item.id} value={item.id}>{item.label}: {item.address_line1}, {item.city}{item.is_default ? ' (default)' : ''}</option>)}</select></label>}
-          {addressError && <Alert variant="warning" className="mt-4">Saved addresses could not be loaded. You can still enter a delivery address below.</Alert>}
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">{Object.entries(labels).map(([name, label]) => <label key={name} className={`block text-sm font-medium text-content-primary ${name === 'address_line1' || name === 'address_line2' ? 'sm:col-span-2' : ''}`}>{label}<input required={name !== 'address_line2'} autoComplete={name === 'full_name' ? 'name' : name === 'phone' ? 'tel' : name === 'address_line1' ? 'address-line1' : name === 'postal_code' ? 'postal-code' : 'on'} value={address[name]} onChange={(event) => { setSelectedAddress(''); setAddress((current) => ({ ...current, [name]: event.target.value })); }} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm focus:border-line-focus focus:outline-none focus:ring-2 focus:ring-brand/20" /></label>)}</div>
-          <div className="mt-6 border-t border-line pt-5"><h3 className="text-sm font-semibold text-content-primary">Payment</h3><p className="mt-2 text-sm text-content-secondary">Cash on delivery</p></div>
-          <div className="mt-6 border-t border-line pt-5"><h3 className="text-sm font-semibold text-content-primary">Discount code</h3><div className="mt-3 flex gap-2"><label className="sr-only" htmlFor="discount-code">Discount code</label><input id="discount-code" value={discountCode} onChange={(event) => { setDiscountCode(event.target.value.toUpperCase()); setDiscount(null); }} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); applyCode(event); } }} className="min-w-0 flex-1 rounded-md border border-line bg-surface-card px-3 py-2 text-sm" autoComplete="off" /><Button type="button" variant="secondary" isLoading={isApplyingDiscount} onClick={applyCode}>Apply</Button></div>{discountError && <Alert variant="error" className="mt-3">{discountError}</Alert>}{appliedDiscount > 0 && <p className="mt-3 text-sm text-feedback-success">{discount.code} applied: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(appliedDiscount)} off.</p>}</div>
-          {error && <Alert variant="error" className="mt-5">{error}</Alert>}
-          <Button type="submit" size="lg" isLoading={isPlacing} className="mt-6 w-full px-3 sm:px-6">Place order (Cash on Delivery)</Button>
-          <Link to="/account" className="mt-4 block text-sm text-content-link hover:underline">Manage saved addresses</Link>
+      <div className="border-b border-ink pb-6"><h1 className="text-section">Checkout</h1><p className="mt-3 text-lead text-ink-2">Payment is cash on delivery.</p></div>
+      <div className="mt-8 grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <form onSubmit={submit} className="min-w-0">
+          <section aria-labelledby="delivery-heading">
+            <h2 id="delivery-heading" className="text-title">Delivery address</h2>
+            {addresses.length > 0 && <label className="mt-5 block text-sm font-semibold text-ink">Saved address<select value={selectedAddress} onChange={(event) => selectAddress(event.target.value)} className="mt-1.5 block min-h-touch w-full rounded-control border border-line-strong bg-paper px-3.5 py-2.5 text-ink hover:border-ink"><option value="">Use a different address</option>{addresses.map((item) => <option key={item.id} value={item.id}>{item.label}: {item.address_line1}, {item.city}{item.is_default ? ' (default)' : ''}</option>)}</select></label>}
+            {addressError && <Alert variant="warning" className="mt-4">Saved addresses could not be loaded. You can still enter a delivery address below.</Alert>}
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">{Object.entries(labels).map(([name, label]) => <FormField key={name} id={`checkout-${name}`} label={label} required={name !== 'address_line2'} className={name === 'address_line1' || name === 'address_line2' ? 'sm:col-span-2' : ''}><Input name={name} autoComplete={autoCompleteFor(name)} value={address[name]} onChange={(event) => { setSelectedAddress(''); setAddress((current) => ({ ...current, [name]: event.target.value })); }} /></FormField>)}</div>
+            <Link to="/account" className="link mt-4 inline-flex min-h-touch items-center text-sm">Manage saved addresses</Link>
+          </section>
+          <section aria-labelledby="payment-heading" className="mt-8 border-t border-ink pt-6">
+            <h2 id="payment-heading" className="text-title">Payment</h2>
+            <p className="mt-2 text-ink-2">Cash on delivery. You pay when the order arrives.</p>
+          </section>
+          <section aria-labelledby="discount-heading" className="mt-8 border-t border-ink pt-6">
+            <h2 id="discount-heading" className="text-title">Discount code</h2>
+            <div className="mt-4 flex gap-2"><label className="sr-only" htmlFor="discount-code">Discount code</label><Input id="discount-code" value={discountCode} onChange={(event) => { setDiscountCode(event.target.value.toUpperCase()); setDiscount(null); }} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); applyCode(event); } }} autoComplete="off" /><Button type="button" variant="secondary" isLoading={isApplyingDiscount} onClick={applyCode} className="min-h-touch shrink-0">Apply</Button></div>
+            {discountError && <Alert variant="error" className="mt-3">{discountError}</Alert>}
+            {appliedDiscount > 0 && <p className="mt-3 text-ink-2" role="status"><span className="tag tag-in">{discount.code}</span> applied: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(appliedDiscount)} off.</p>}
+          </section>
+          {error && <Alert variant="error" className="mt-6">{error}</Alert>}
+          <Button type="submit" size="lg" isLoading={isPlacing} className="mt-8 w-full px-3 sm:w-auto sm:px-6">Place order (Cash on Delivery)</Button>
         </form>
         <CartSummary subtotal={subtotal} discountAmount={appliedDiscount} itemCount={count} showCheckout={false} />
       </div>
