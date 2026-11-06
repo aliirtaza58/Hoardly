@@ -5,7 +5,21 @@ import { FormField } from '../components/common/FormField.jsx';
 import { Input } from '../components/common/Input.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
-import { UserPlus, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
+
+const ACCOUNT_FACTS = [
+  ['Saved items', 'Keep the products you want to come back to.'],
+  ['Order history', 'View your orders and their details.'],
+  ['Saved addresses', 'Manage your profile and saved addresses.'],
+  ['Cash on delivery', 'Every order is paid in cash on delivery.'],
+];
+
+const PASSWORD_RULES = [
+  ['length', '8+ characters'],
+  ['uppercase', 'Uppercase letter'],
+  ['lowercase', 'Lowercase letter'],
+  ['number', 'Numeric digit'],
+];
 
 export function RegisterPage() {
   const { register, error: authError, clearError } = useAuth();
@@ -102,22 +116,15 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8 bg-surface-card p-8 rounded-xl border border-line shadow-sm">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-lg bg-brand text-content-on-action items-center justify-center shadow-xs">
-            <UserPlus className="w-6 h-6 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-content-primary">
-            Create account
-          </h1>
-          <p className="text-sm text-content-secondary">
-            Join Hoardly to explore products, build wishlists, and track orders.
-          </p>
-        </div>
+    <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:px-8 lg:py-16">
+      <div className="lg:col-start-1 lg:row-start-1">
+        <h1 className="text-section font-bold text-ink">Create your account</h1>
+        <p className="mt-3 max-w-prose text-lead text-ink-2">
+          Join Hoardly to explore products, build wishlists, and track orders.
+        </p>
+      </div>
 
-        {/* Global Error Banner */}
+      <div className="space-y-6 border-t border-ink pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         {authError && (
           <Alert variant="error" onDismiss={clearError}>
             {authError}
@@ -125,8 +132,7 @@ export function RegisterPage() {
         )}
         {registrationMessage && <Alert variant="success">{registrationMessage}</Alert>}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <FormField
             id="register-name"
             label="Full name"
@@ -192,27 +198,17 @@ export function RegisterPage() {
             />
           </FormField>
 
-          {/* Password checklist */}
-          <div className="p-3 bg-surface-muted rounded-md space-y-1.5 text-xs text-content-secondary">
-            <p className="font-semibold text-content-primary">Password criteria:</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              <span className={`flex items-center gap-1.5 ${passwordValidation.length ? 'text-feedback-success font-medium' : 'text-content-muted'}`}>
-                <Check className="w-3.5 h-3.5" aria-hidden="true" />
-                8+ characters
-              </span>
-              <span className={`flex items-center gap-1.5 ${passwordValidation.uppercase ? 'text-feedback-success font-medium' : 'text-content-muted'}`}>
-                <Check className="w-3.5 h-3.5" aria-hidden="true" />
-                Uppercase letter
-              </span>
-              <span className={`flex items-center gap-1.5 ${passwordValidation.lowercase ? 'text-feedback-success font-medium' : 'text-content-muted'}`}>
-                <Check className="w-3.5 h-3.5" aria-hidden="true" />
-                Lowercase letter
-              </span>
-              <span className={`flex items-center gap-1.5 ${passwordValidation.number ? 'text-feedback-success font-medium' : 'text-content-muted'}`}>
-                <Check className="w-3.5 h-3.5" aria-hidden="true" />
-                Numeric digit
-              </span>
-            </div>
+          <div className="text-sm">
+            <p className="mb-2 font-semibold text-ink">Password criteria</p>
+            <ul className="ruled grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
+              {PASSWORD_RULES.map(([key, label]) => (
+                <li key={key} className={`flex items-center gap-2 py-2 ${passwordValidation[key] ? 'text-ink' : 'text-muted'}`}>
+                  <Check className={`h-4 w-4 shrink-0 ${passwordValidation[key] ? 'text-accent' : 'text-rule'}`} aria-hidden="true" />
+                  {label}
+                  <span className="sr-only">{passwordValidation[key] ? '(met)' : '(not met yet)'}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <FormField
@@ -236,23 +232,28 @@ export function RegisterPage() {
             variant="primary"
             size="lg"
             isLoading={isSubmitting}
-            className="w-full mt-2"
+            className="w-full min-h-touch"
           >
             Create account
           </Button>
         </form>
 
-        {/* Footer */}
-        <div className="text-center text-xs text-content-secondary border-t border-line pt-4">
+        <p className="border-t border-rule pt-4 text-sm text-ink-2">
           Already registered?{' '}
-          <Link
-            to="/login"
-            className="text-content-link hover:underline font-semibold"
-          >
+          <Link to="/login" className="link text-ink">
             Sign in to account
           </Link>
-        </div>
+        </p>
       </div>
+
+      <ul className="ruled lg:col-start-1 lg:row-start-2 lg:self-start">
+        {ACCOUNT_FACTS.map(([title, text]) => (
+          <li key={title} className="py-3">
+            <p className="font-semibold text-ink">{title}</p>
+            <p className="text-sm text-ink-2">{text}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

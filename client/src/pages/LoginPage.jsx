@@ -5,7 +5,13 @@ import { FormField } from '../components/common/FormField.jsx';
 import { Input } from '../components/common/Input.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
-import { ShoppingBag } from 'lucide-react';
+
+const ACCOUNT_FACTS = [
+  ['Saved items', 'Keep the products you want to come back to.'],
+  ['Order history', 'View your orders and their details.'],
+  ['Saved addresses', 'Manage your profile and saved addresses.'],
+  ['Cash on delivery', 'Every order is paid in cash on delivery.'],
+];
 
 function safeRedirectPath(path) {
   if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
@@ -68,29 +74,21 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8 bg-surface-card p-8 rounded-xl border border-line shadow-sm">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-lg bg-brand text-content-on-action items-center justify-center shadow-xs">
-            <ShoppingBag className="w-6 h-6 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-content-primary">
-            Sign in to account
-          </h1>
-          <p className="text-sm text-content-secondary">
-            Enter your credentials below to access your account and orders.
-          </p>
-        </div>
+    <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:px-8 lg:py-16">
+      <div className="lg:col-start-1 lg:row-start-1">
+        <h1 className="text-section font-bold text-ink">Sign in</h1>
+        <p className="mt-3 max-w-prose text-lead text-ink-2">
+          Enter your credentials below to access your account and orders.
+        </p>
+      </div>
 
-        {/* Global Error Banner */}
+      <div className="space-y-6 border-t border-ink pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         {authError && (
           <Alert variant="error" onDismiss={clearError}>
             {authError}
           </Alert>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <FormField
             id="login-email"
@@ -125,11 +123,8 @@ export function LoginPage() {
             />
           </FormField>
 
-          <div className="flex items-center justify-end text-xs">
-            <Link
-              to="/forgot-password"
-              className="text-content-link hover:underline font-medium"
-            >
+          <div className="flex justify-end text-sm">
+            <Link to="/forgot-password" className="link inline-flex min-h-touch items-center text-ink">
               Forgot your password?
             </Link>
           </div>
@@ -139,23 +134,28 @@ export function LoginPage() {
             variant="primary"
             size="lg"
             isLoading={isSubmitting}
-            className="w-full"
+            className="w-full min-h-touch"
           >
             Sign in to account
           </Button>
         </form>
 
-        {/* Footer */}
-        <div className="text-center text-xs text-content-secondary border-t border-line pt-4">
+        <p className="border-t border-rule pt-4 text-sm text-ink-2">
           Do not have an account?{' '}
-          <Link
-            to="/register"
-            className="text-content-link hover:underline font-semibold"
-          >
+          <Link to="/register" className="link text-ink">
             Create account
           </Link>
-        </div>
+        </p>
       </div>
+
+      <ul className="ruled lg:col-start-1 lg:row-start-2 lg:self-start">
+        {ACCOUNT_FACTS.map(([title, text]) => (
+          <li key={title} className="py-3">
+            <p className="font-semibold text-ink">{title}</p>
+            <p className="text-sm text-ink-2">{text}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

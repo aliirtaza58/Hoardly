@@ -5,7 +5,12 @@ import { FormField } from '../components/common/FormField.jsx';
 import { Input } from '../components/common/Input.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
-import { KeyRound, ArrowLeft } from 'lucide-react';
+
+const RESET_STEPS = [
+  ['Enter your email', 'Use the address on your account.'],
+  ['Open the reset link', 'We send it to that address.'],
+  ['Choose a new password', 'Then sign in with your new password.'],
+];
 
 export function ForgotPasswordPage() {
   const { forgotPassword, error: authError, clearError } = useAuth();
@@ -38,21 +43,15 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8 bg-surface-card p-8 rounded-xl border border-line shadow-sm">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-lg bg-brand text-content-on-action items-center justify-center shadow-xs">
-            <KeyRound className="w-6 h-6 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-content-primary">
-            Reset account password
-          </h1>
-          <p className="text-sm text-content-secondary">
-            Enter your email and we will send you a link to choose a new password.
-          </p>
-        </div>
+    <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:px-8 lg:py-16">
+      <div className="lg:col-start-1 lg:row-start-1">
+        <h1 className="text-section font-bold text-ink">Reset account password</h1>
+        <p className="mt-3 max-w-prose text-lead text-ink-2">
+          Enter your email and we will send you a link to choose a new password.
+        </p>
+      </div>
 
+      <div className="space-y-6 border-t border-ink pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         {authError && (
           <Alert variant="error" onDismiss={clearError}>
             {authError}
@@ -60,15 +59,12 @@ export function ForgotPasswordPage() {
         )}
 
         {successMessage ? (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <Alert variant="success" title="Check your inbox">
               {successMessage}
             </Alert>
-            <Link to="/login" className="block w-full">
-              <Button variant="secondary" size="lg" className="w-full">
-                <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-                Return to sign in
-              </Button>
+            <Link to="/login" className="link inline-flex min-h-touch items-center text-sm text-ink">
+              Return to sign in
             </Link>
           </div>
         ) : (
@@ -99,23 +95,28 @@ export function ForgotPasswordPage() {
               variant="primary"
               size="lg"
               isLoading={isSubmitting}
-              className="w-full"
+              className="w-full min-h-touch"
             >
               Send reset link
             </Button>
 
-            <div className="text-center pt-2">
-              <Link
-                to="/login"
-                className="text-xs text-content-link hover:underline font-medium inline-flex items-center gap-1"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <p className="border-t border-rule pt-4 text-sm">
+              <Link to="/login" className="link inline-flex min-h-touch items-center text-ink">
                 Back to sign in
               </Link>
-            </div>
+            </p>
           </form>
         )}
       </div>
+
+      <ol className="ruled lg:col-start-1 lg:row-start-2 lg:self-start">
+        {RESET_STEPS.map(([title, text]) => (
+          <li key={title} className="py-3">
+            <p className="font-semibold text-ink">{title}</p>
+            <p className="text-sm text-ink-2">{text}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

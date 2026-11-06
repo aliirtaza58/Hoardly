@@ -5,6 +5,8 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
+import { FormField } from '../components/common/FormField.jsx';
+import { Input } from '../components/common/Input.jsx';
 
 const emptyProfile = { full_name: '', email: '', phone: '' };
 const emptyAddress = { label: 'home', full_name: '', phone: '', address_line1: '', address_line2: '', city: '', state: '', postal_code: '', country: '', is_default: false };
@@ -133,55 +135,57 @@ export function ProfilePage() {
     }
   };
 
-  if (authLoading || isLoading) return <div className="flex min-h-96 items-center justify-center"><Spinner size="lg" /><span className="ml-3 text-sm text-content-secondary">Loading account...</span></div>;
+  if (authLoading || isLoading) return <div className="flex min-h-96 items-center justify-center" role="status"><Spinner size="lg" /><span className="ml-3 text-ink-2">Loading account...</span></div>;
   if (!isAuthenticated) return null;
+
+  const sectionClass = 'grid grid-cols-1 gap-6 border-t border-ink pt-6 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10';
+  const selectClass = 'block min-h-touch w-full rounded-control border border-line-strong bg-paper px-3.5 py-2.5 text-ink hover:border-ink';
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-7">
-        <div><p className="text-sm font-semibold text-content-link">Your account</p><h1 className="mt-2 text-3xl font-bold text-content-primary">Profile and addresses</h1></div>
-        <Link to="/orders" className="text-sm font-semibold text-content-link hover:underline">View order history</Link>
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-6">
+        <h1 className="text-section">Profile and addresses</h1>
+        <Link to="/orders" className="link inline-flex min-h-touch items-center text-sm">View order history</Link>
       </div>
       {error && <Alert variant="error" className="mt-6">{error}</Alert>}
       {message && <Alert variant="success" className="mt-6">{message}</Alert>}
 
-      <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)]">
-        <div className="space-y-10">
-          <section aria-labelledby="profile-heading">
-            <h2 id="profile-heading" className="text-xl font-bold text-content-primary">Personal details</h2>
-            <form onSubmit={saveProfile} className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {[['full_name', 'Full name', 'name'], ['email', 'Email address', 'email'], ['phone', 'Phone', 'tel']].map(([field, label, autoComplete]) => <label key={field} className="block text-sm font-medium text-content-primary">{label}<input type={field === 'email' ? 'email' : 'text'} autoComplete={autoComplete} required={field !== 'phone'} value={profile[field] || ''} onChange={(event) => setProfile((current) => ({ ...current, [field]: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm focus:border-line-focus focus:outline-none focus:ring-2 focus:ring-brand/20" /></label>)}
-              <div className="sm:col-span-2"><Button type="submit" isLoading={isSavingProfile}>Save profile</Button></div>
-            </form>
-          </section>
-
-          <section aria-labelledby="password-heading" className="border-t border-line pt-8">
-            <h2 id="password-heading" className="text-xl font-bold text-content-primary">Change password</h2>
-            <form onSubmit={savePassword} className="mt-5 max-w-lg">
-              <label className="block text-sm font-medium text-content-primary">New password<input type="password" autoComplete="new-password" minLength="8" required value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm focus:border-line-focus focus:outline-none focus:ring-2 focus:ring-brand/20" /></label>
-              <p className="mt-2 text-xs text-content-secondary">Use at least 8 characters, with an uppercase letter, a lowercase letter, and a number.</p>
-              <Button type="submit" variant="secondary" isLoading={isSavingProfile} className="mt-4">Update password</Button>
-            </form>
-          </section>
-        </div>
-
-        <section aria-labelledby="addresses-heading">
-          <h2 id="addresses-heading" className="text-xl font-bold text-content-primary">Saved addresses</h2>
-          <div className="mt-5 space-y-3">
-            {addresses.length === 0 && <p className="text-sm text-content-secondary">No saved addresses yet.</p>}
-            {addresses.map((address) => <article key={address.id} className="rounded-md border border-line bg-surface-card p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold capitalize text-content-primary">{address.label}{address.is_default ? ' · Default' : ''}</p><p className="mt-2 text-sm leading-6 text-content-secondary">{address.full_name}<br />{address.address_line1}{address.address_line2 ? `, ${address.address_line2}` : ''}<br />{address.city}, {address.state} {address.postal_code}<br />{address.country}<br />{address.phone}</p></div>
-                <div className="flex flex-wrap gap-2"><Button variant="ghost" size="sm" onClick={() => editAddress(address)}>Edit</Button>{!address.is_default && <Button variant="secondary" size="sm" onClick={() => makeDefault(address.id)}>Set default</Button>}<Button variant="destructive" size="sm" onClick={() => setDeleteAddressId(address.id)}>Remove</Button></div></div>
-              {deleteAddressId === address.id && <div className="mt-4 border-t border-line pt-3"><p className="text-sm text-content-secondary">Remove this saved address?</p><div className="mt-3 flex flex-wrap gap-2"><Button variant="destructive" size="sm" onClick={() => removeAddress(address.id)}>Remove address</Button><Button variant="secondary" size="sm" onClick={() => setDeleteAddressId(null)}>Keep address</Button></div></div>}
-            </article>)}
-          </div>
-
-          <form onSubmit={saveAddress} className="mt-6 border-t border-line pt-6">
-            <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-lg font-semibold text-content-primary">{editingAddress ? 'Edit address' : 'Add an address'}</h3>{editingAddress && <Button type="button" variant="link" size="sm" onClick={() => { setEditingAddress(null); setAddressDraft(emptyAddress); }}>Cancel edit</Button>}</div>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">{addressFields.map(([field, label]) => <label key={field} className={`block text-sm font-medium text-content-primary ${field === 'address_line1' || field === 'address_line2' ? 'sm:col-span-2' : ''}`}>{label}{field === 'label' ? <select value={addressDraft.label} onChange={(event) => setAddressDraft((current) => ({ ...current, label: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm"><option value="home">Home</option><option value="work">Work</option><option value="other">Other</option></select> : <input required={field !== 'address_line2'} value={addressDraft[field] || ''} onChange={(event) => setAddressDraft((current) => ({ ...current, [field]: event.target.value }))} className="mt-2 block w-full rounded-md border border-line bg-surface-card px-3 py-2 text-sm" />}</label>)}</div>
-            <label className="mt-4 flex items-center gap-2 text-sm text-content-primary"><input type="checkbox" checked={addressDraft.is_default} onChange={(event) => setAddressDraft((current) => ({ ...current, is_default: event.target.checked }))} className="h-4 w-4 accent-brand" />Set as default address</label>
-            <Button type="submit" isLoading={isSavingAddress} className="mt-4">{editingAddress ? 'Save address' : 'Add address'}</Button>
+      <div className="mt-8 space-y-10">
+        <section aria-labelledby="profile-heading" className={sectionClass}>
+          <h2 id="profile-heading" className="text-title">Profile details</h2>
+          <form onSubmit={saveProfile} className="grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+            {[['full_name', 'Full name', 'name'], ['email', 'Email address', 'email'], ['phone', 'Phone', 'tel']].map(([field, label, autoComplete]) => <FormField key={field} id={`profile-${field}`} label={label} required={field !== 'phone'}><Input name={field} type={field === 'email' ? 'email' : 'text'} autoComplete={autoComplete} value={profile[field] || ''} onChange={(event) => setProfile((current) => ({ ...current, [field]: event.target.value }))} /></FormField>)}
+            <div className="sm:col-span-2"><Button type="submit" isLoading={isSavingProfile} className="min-h-touch">Save profile</Button></div>
           </form>
+        </section>
+
+        <section aria-labelledby="password-heading" className={sectionClass}>
+          <h2 id="password-heading" className="text-title">Change password</h2>
+          <form onSubmit={savePassword} className="max-w-lg">
+            <FormField id="profile-new-password" label="New password" required helperText="Use at least 8 characters, with an uppercase letter, a lowercase letter, and a number."><Input name="password" type="password" autoComplete="new-password" minLength="8" value={password} onChange={(event) => setPassword(event.target.value)} /></FormField>
+            <Button type="submit" variant="secondary" isLoading={isSavingProfile} className="mt-4 min-h-touch">Update password</Button>
+          </form>
+        </section>
+
+        <section aria-labelledby="addresses-heading" className={sectionClass}>
+          <h2 id="addresses-heading" className="text-title">Saved addresses</h2>
+          <div className="min-w-0 max-w-3xl">
+            {addresses.length === 0 && <p className="text-ink-2">No saved addresses yet.</p>}
+            {addresses.length > 0 && <div className="ruled">{addresses.map((address) => <article key={address.id} className="py-4">
+              <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><p className="flex flex-wrap items-center gap-2 font-semibold capitalize text-ink">{address.label}{address.is_default && <span className="tag normal-case">Default</span>}</p><p className="mt-2 text-sm leading-6 text-ink-2">{address.full_name}<br />{address.address_line1}{address.address_line2 ? `, ${address.address_line2}` : ''}<br />{address.city}, {address.state} {address.postal_code}<br />{address.country}<br />{address.phone}</p></div>
+                <div className="flex flex-wrap gap-x-4"><Button variant="link" size="sm" onClick={() => editAddress(address)} className="min-h-touch">Edit</Button>{!address.is_default && <Button variant="link" size="sm" onClick={() => makeDefault(address.id)} className="min-h-touch">Set default</Button>}<Button variant="link" size="sm" onClick={() => setDeleteAddressId(address.id)} className="min-h-touch text-ink-2">Remove</Button></div></div>
+              {deleteAddressId === address.id && <div className="mt-3 border-t border-rule-2 pt-3"><p className="text-sm text-ink-2">Remove this saved address?</p><div className="mt-3 flex flex-wrap gap-2"><Button size="sm" onClick={() => removeAddress(address.id)} className="min-h-touch">Remove address</Button><Button variant="secondary" size="sm" onClick={() => setDeleteAddressId(null)} className="min-h-touch">Keep address</Button></div></div>}
+            </article>)}</div>}
+
+            <form onSubmit={saveAddress} className="mt-8">
+              <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="text-title">{editingAddress ? 'Edit address' : 'Add an address'}</h3>{editingAddress && <Button type="button" variant="link" size="sm" onClick={() => { setEditingAddress(null); setAddressDraft(emptyAddress); }} className="min-h-touch">Cancel edit</Button>}</div>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">{addressFields.map(([field, label]) => field === 'label'
+                ? <label key={field} className="block text-sm font-semibold text-ink">{label}<select value={addressDraft.label} onChange={(event) => setAddressDraft((current) => ({ ...current, label: event.target.value }))} className={`mt-1.5 ${selectClass}`}><option value="home">Home</option><option value="work">Work</option><option value="other">Other</option></select></label>
+                : <FormField key={field} id={`address-${field}`} label={label} required={field !== 'address_line2'} className={field === 'address_line1' || field === 'address_line2' ? 'sm:col-span-2' : ''}><Input name={field} value={addressDraft[field] || ''} onChange={(event) => setAddressDraft((current) => ({ ...current, [field]: event.target.value }))} /></FormField>)}</div>
+              <label className="mt-4 flex min-h-touch items-center gap-2 text-ink"><input type="checkbox" checked={addressDraft.is_default} onChange={(event) => setAddressDraft((current) => ({ ...current, is_default: event.target.checked }))} className="h-4 w-4 accent-ink" />Set as default address</label>
+              <Button type="submit" isLoading={isSavingAddress} className="mt-4 min-h-touch">{editingAddress ? 'Save address' : 'Add address'}</Button>
+            </form>
+          </div>
         </section>
       </div>
     </div>
