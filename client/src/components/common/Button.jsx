@@ -41,7 +41,7 @@ export function Button({
     primary: [
       'bg-ink text-paper border border-ink',
       'hover:bg-ink-2 hover:border-ink-2',
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
       'active:translate-y-px',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-ink',
     ].join(' '),
@@ -49,7 +49,7 @@ export function Button({
     secondary: [
       'bg-paper-2 text-ink border border-rule',
       'hover:bg-paper-3 hover:border-line-strong',
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
       'active:translate-y-px',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-paper-2',
     ].join(' '),
@@ -57,7 +57,7 @@ export function Button({
     destructive: [
       'bg-destructive text-paper border border-destructive',
       'hover:bg-destructive-hover',
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-error',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-feedback-error',
       'active:bg-destructive-active',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-destructive',
     ].join(' '),
@@ -65,15 +65,15 @@ export function Button({
     ghost: [
       'bg-transparent text-ink',
       'hover:bg-paper-2',
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
-      'active:bg-surface-muted',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+      'active:bg-paper-2',
       'disabled:opacity-50 disabled:cursor-not-allowed',
     ].join(' '),
 
     link: [
       'bg-transparent text-ink p-0 inline-flex items-center underline underline-offset-4 decoration-1',
       'hover:decoration-accent',
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-line-focus',
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
       'active:opacity-80',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline',
     ].join(' '),

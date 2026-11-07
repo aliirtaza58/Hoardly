@@ -76,7 +76,7 @@ export function ProductsPage() {
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-rule pb-3">
             <p className="text-sm tabular-nums text-ink-2">{isLoading ? 'Loading results...' : `${pagination.total} ${pagination.total === 1 ? 'product' : 'products'}`}</p>
             <label className="flex min-w-0 max-w-full items-center gap-2 text-sm text-ink-2">Sort by
-              <select value={filters.sort} onChange={(event) => updateFilters({ ...filters, sort: event.target.value, page: 1 })} className="min-w-0 rounded-control border border-rule bg-paper px-3 py-2 text-base text-ink">
+              <select value={filters.sort} onChange={(event) => updateFilters({ ...filters, sort: event.target.value, page: 1 })} className="min-w-0 rounded-control border border-line-strong bg-paper px-3 py-2 text-base text-ink">
                 <option value="newest">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="rating">Highest rated</option>
               </select>
             </label>

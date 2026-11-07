@@ -2,7 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
 
-const fieldClass = 'mt-2 block w-full rounded-control border border-rule bg-paper px-3 py-2 text-base text-ink';
+const fieldClass = 'mt-2 block w-full rounded-control border border-line-strong bg-paper px-3 py-2 text-base text-ink';
 
 export function ProductFilter({ filters, categories, onChange, onClear }) {
   const update = (name, value) => onChange({ ...filters, [name]: value, page: 1 });
@@ -25,9 +25,9 @@ export function ProductFilter({ filters, categories, onChange, onClear }) {
           <p className="text-sm text-ink-2">Price range</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <label className="sr-only" htmlFor="min-price">Minimum price</label>
-            <input id="min-price" type="number" min="0" value={filters.minPrice} onChange={(event) => update('minPrice', event.target.value)} placeholder="Min" className="w-full rounded-control border border-rule bg-paper px-3 py-2 text-base text-ink placeholder:text-muted" />
+            <input id="min-price" type="number" min="0" value={filters.minPrice} onChange={(event) => update('minPrice', event.target.value)} placeholder="Min" className="w-full rounded-control border border-line-strong bg-paper px-3 py-2 text-base text-ink placeholder:text-muted" />
             <label className="sr-only" htmlFor="max-price">Maximum price</label>
-            <input id="max-price" type="number" min="0" value={filters.maxPrice} onChange={(event) => update('maxPrice', event.target.value)} placeholder="Max" className="w-full rounded-control border border-rule bg-paper px-3 py-2 text-base text-ink placeholder:text-muted" />
+            <input id="max-price" type="number" min="0" value={filters.maxPrice} onChange={(event) => update('maxPrice', event.target.value)} placeholder="Max" className="w-full rounded-control border border-line-strong bg-paper px-3 py-2 text-base text-ink placeholder:text-muted" />
           </div>
         </div>
         <label className="block text-sm text-ink-2">

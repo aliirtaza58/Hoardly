@@ -41,7 +41,7 @@ export function CartItem({ item, onUpdate, onRemove }) {
       <div className="min-w-0">
         <Link to={`/products/${product.slug}`} className="block font-semibold text-ink no-underline hover:underline hover:decoration-accent">{product.name}</Link>
         <p className="mt-1 text-sm text-ink-2">{formatCurrency(product.price)} each</p>
-        <div className="mt-3 inline-flex items-center overflow-hidden rounded-control border border-rule bg-paper">
+        <div className="mt-3 inline-flex items-center overflow-hidden rounded-control border border-line-strong bg-paper">
           <button type="button" disabled={isUpdating || item.quantity <= 1} onClick={() => updateQuantity(item.quantity - 1)} className={stepper} aria-label={`Decrease quantity of ${product.name}`}><Minus className="h-4 w-4" aria-hidden="true" /></button>
           <span className="w-10 text-center font-mono text-sm tabular-nums" aria-live="polite">{item.quantity}</span>
           <button type="button" disabled={isUpdating || item.quantity >= product.stock_quantity} onClick={() => updateQuantity(item.quantity + 1)} className={stepper} aria-label={`Increase quantity of ${product.name}`}><Plus className="h-4 w-4" aria-hidden="true" /></button>

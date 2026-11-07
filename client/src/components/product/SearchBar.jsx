@@ -79,7 +79,7 @@ export function SearchBar({ className = '' }) {
         onChange={handleChange}
         placeholder="Search products"
         aria-label="Search products by name or description"
-        className="min-h-touch min-w-0 w-full pl-9 pr-12 py-2 text-sm bg-paper border border-ink rounded-control placeholder:text-muted text-ink focus:ring-1 focus:ring-ink outline-none"
+        className="min-h-touch min-w-0 w-full pl-9 pr-12 py-2 text-sm bg-paper border border-ink rounded-control placeholder:text-muted text-ink"
       />
       {query && (
         <button

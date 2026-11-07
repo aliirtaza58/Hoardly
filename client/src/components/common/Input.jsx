@@ -40,10 +40,10 @@ export const Input = forwardRef(function Input(
   const isInteractionDisabled = disabled || isLoading;
 
   const stateClasses = hasError
-    ? 'border-feedback-error focus:border-feedback-error focus:ring-2 focus:ring-feedback-error'
+    ? 'border-feedback-error focus:border-feedback-error'
     : isSelected
     ? 'border-ink'
-    : 'border-line-strong hover:border-ink focus:border-ink focus:ring-1 focus:ring-ink';
+    : 'border-line-strong hover:border-ink focus:border-ink';
 
   return (
     <div className="relative w-full">
@@ -65,11 +65,11 @@ export const Input = forwardRef(function Input(
         aria-invalid={hasError || ariaInvalid ? 'true' : 'false'}
         aria-describedby={ariaDescribedBy}
         aria-busy={isLoading}
-        className={`w-full px-3.5 py-2.5 bg-paper text-ink placeholder:text-muted text-sm rounded-control border transition-[border-color,box-shadow] duration-fast outline-none disabled:opacity-50 disabled:bg-surface-muted disabled:cursor-not-allowed ${stateClasses} ${isLoading ? 'pr-10' : ''} ${className}`}
+        className={`w-full px-3.5 py-2.5 bg-paper text-ink placeholder:text-muted text-sm rounded-control border transition-[border-color,box-shadow] duration-fast disabled:opacity-50 disabled:bg-paper-2 disabled:cursor-not-allowed ${stateClasses} ${isLoading ? 'pr-10' : ''} ${className}`}
         {...props}
       />
       {isLoading && (
-        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-content-muted">
+        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-muted">
           <Spinner size="sm" />
         </div>
       )}

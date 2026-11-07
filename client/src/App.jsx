@@ -75,7 +75,7 @@ class AppErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-start justify-center px-6"><h1 className="text-section">This page could not load.</h1><p className="mt-3 text-sm leading-6 text-content-secondary">The page hit an unexpected problem. Reload to try again.</p><button type="button" onClick={() => window.location.reload()} className="mt-5 min-h-touch rounded-control bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-ink-2">Reload page</button></main>;
+      return <main className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-start justify-center px-6"><h1 className="text-section">This page could not load.</h1><p className="mt-3 text-sm leading-6 text-ink-2">The page hit an unexpected problem. Reload to try again.</p><button type="button" onClick={() => window.location.reload()} className="mt-5 min-h-touch rounded-control bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-ink-2">Reload page</button></main>;
     }
     return this.props.children;
   }
