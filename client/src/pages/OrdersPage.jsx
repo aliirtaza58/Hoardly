@@ -6,7 +6,7 @@ import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
 
-const statusTag = (status) => (status === 'cancelled' ? 'tag-out' : status === 'pending' ? '' : 'tag-in');
+import { orderStatusTag } from '../utils/orderStatus.js';
 
 export function OrdersPage() {
   const { isAuthenticated } = useAuth();
@@ -38,12 +38,12 @@ export function OrdersPage() {
           ? <div><p className="text-ink-2">No orders yet. Your completed purchases will appear here.</p><Link to="/products" className="link mt-3 inline-flex min-h-touch items-center">Browse products</Link></div>
           : <div role="table" aria-label="Orders">
               <div role="row" className={`${cols} hidden border-b border-ink pb-2 text-sm text-muted sm:grid`}><span role="columnheader">Order</span><span role="columnheader">Placed</span><span role="columnheader" className="text-right">Items</span><span role="columnheader" className="text-right">Total</span><span role="columnheader" className="text-right">Status</span></div>
-              <div className="border-t border-ink sm:border-t-0">{orders.map((order) => <div role="row" key={order.id} className={`${cols} border-b border-rule py-4`}>
+              <div role="rowgroup" className="border-t border-ink sm:border-t-0">{orders.map((order) => <div role="row" key={order.id} className={`${cols} border-b border-rule py-4`}>
                 <span role="cell" className="min-w-0"><Link to={`/orders/${order.id}`} className="link inline-flex min-h-touch items-center break-all font-mono text-sm">{order.order_number}</Link></span>
                 <span role="cell" className="order-3 text-sm text-ink-2 sm:order-none"><span className="sm:hidden">Placed </span>{formatDate(order.created_at)}</span>
                 <span role="cell" className="order-5 font-mono text-sm tabular-nums text-ink-2 sm:order-none sm:text-right">{order.order_items?.length || 0}<span className="sm:hidden"> items</span></span>
                 <span role="cell" className="order-4 text-right font-display font-bold tabular-nums sm:order-none">{formatCurrency(order.total)}</span>
-                <span role="cell" className="order-2 text-right sm:order-none"><span className={`tag capitalize ${statusTag(order.status)}`}>{order.status}</span></span>
+                <span role="cell" className="order-2 text-right sm:order-none"><span className={orderStatusTag(order.status)}>{order.status}</span></span>
               </div>)}</div>
             </div>)}
       </div>
