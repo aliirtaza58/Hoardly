@@ -15,13 +15,13 @@ export function CartPage() {
   const head = (title, lead) => <div className="border-b border-ink pb-6"><h1 className="text-section">{title}</h1>{lead && <p className="mt-3 text-lead text-ink-2">{lead}</p>}</div>;
 
   if (!isAuthenticated) {
-    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{head('Your cart is waiting.', 'Sign in to keep the products you choose in one place.')}<Link to="/login" className="mt-6 inline-block no-underline"><Button>Sign in to continue</Button></Link></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{head('Your cart is waiting.', 'Sign in to keep the products you choose in one place.')}<Link to="/login" className="btn-primary mt-6">Sign in to continue</Link></div>;
   }
 
   if (isLoading && !items.length) return <div className="flex min-h-96 items-center justify-center" role="status"><Spinner size="lg" /><span className="ml-3 text-ink-2">Loading your cart...</span></div>;
 
   if (!items.length) {
-    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{head('Your cart is empty.', 'Discover practical, well-made goods and add the ones that fit your day.')}<Link to="/products" className="mt-6 inline-block no-underline"><Button>Start shopping</Button></Link></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{head('Your cart is empty.', 'Discover practical, well-made goods and add the ones that fit your day.')}<Link to="/products" className="btn-primary mt-6">Start shopping</Link></div>;
   }
 
   return (

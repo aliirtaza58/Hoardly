@@ -7,9 +7,8 @@ import { productsService } from '../services/products.js';
 import { formatCurrency } from '../utils/formatters.js';
 
 // Links styled as the Button pair (a <button> inside a <Link> is invalid HTML).
-const actionBase = 'inline-flex min-h-touch items-center justify-center rounded-control border px-6 py-3 text-base font-semibold no-underline transition-colors duration-fast';
-const primaryAction = `${actionBase} border-ink bg-ink text-paper hover:border-ink-2 hover:bg-ink-2`;
-const secondaryAction = `${actionBase} border-rule bg-paper-2 text-ink hover:bg-paper-3`;
+const primaryAction = 'btn-primary px-6 py-3 text-base';
+const secondaryAction = 'btn-secondary px-6 py-3 text-base';
 
 export function HomePage() {
   const [products, setProducts] = useState([]);
@@ -41,7 +40,7 @@ export function HomePage() {
       <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start lg:gap-16 lg:px-8" aria-labelledby="home-heading">
         <div className="min-w-0 lg:pt-6">
           <h1 id="home-heading" className="text-display-s font-bold text-ink lg:text-display">Useful things, plainly priced.</h1>
-          <p className="mt-5 max-w-xl text-lead text-ink-2">Electronics, apparel and home goods. Cash on delivery.</p>
+          <p className="mt-5 max-w-xl text-lead text-ink-2">Everyday goods, paid for in cash on delivery.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/products" className={primaryAction}>Shop all products</Link>
             <Link to="/categories" className={secondaryAction}>Categories</Link>
@@ -82,7 +81,7 @@ export function HomePage() {
         <section aria-labelledby="categories-heading" className="pt-6">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-4">
             <h2 id="categories-heading" className="text-section font-bold text-ink">Shop by category</h2>
-            <Link to="/categories" className="link text-sm">View all categories</Link>
+            <Link to="/categories" className="link inline-flex min-h-touch items-center text-sm">View all categories</Link>
           </div>
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-[repeat(3,minmax(0,1fr))]">
             {categories.map((category) => (
@@ -102,7 +101,7 @@ export function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-4">
             <h2 id="featured-heading" className="text-section font-bold text-ink">New in the shop</h2>
-            <Link to="/products" className="link text-sm">View all products</Link>
+            <Link to="/products" className="link inline-flex min-h-touch items-center text-sm">View all products</Link>
           </div>
           <div className="mt-6"><ProductGrid products={products} isLoading={isLoading} error={error} /></div>
         </div>

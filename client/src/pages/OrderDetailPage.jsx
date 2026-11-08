@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ordersService } from '../services/orders.js';
 import { Alert } from '../components/common/Alert.jsx';
-import { Button } from '../components/common/Button.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
 import { formatCurrency, formatDate } from '../utils/formatters.js';
 
@@ -28,14 +27,13 @@ export function OrderDetailPage() {
 
   const shippingAddress = order.shipping_address || {};
   const statusIndex = orderSteps.indexOf(order.status);
-  const statusTag = order.status === 'cancelled' ? 'tag-out' : order.status === 'pending' ? '' : 'tag-in';
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-6"><h1 className="text-section">Order <span className="break-all font-mono font-normal tracking-normal">{order.order_number}</span></h1><Link to="/orders" className="no-underline"><Button variant="secondary">Back to orders</Button></Link></div>
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-6"><h1 className="text-section">Order <span className="break-all font-mono font-normal tracking-normal">{order.order_number}</span></h1><Link to="/orders" className="btn-secondary">Back to orders</Link></div>
       <dl className="mt-6 grid grid-cols-1 text-sm sm:grid-cols-3 sm:gap-x-8">
         <div className="flex justify-between gap-4 border-b border-rule py-3"><dt className="text-ink-2">Placed</dt><dd>{formatDate(order.created_at)}</dd></div>
-        <div className="flex items-center justify-between gap-4 border-b border-rule py-3"><dt className="text-ink-2">Status</dt><dd><span className={`tag capitalize ${statusTag}`}>{order.status}</span></dd></div>
+        <div className="flex items-center justify-between gap-4 border-b border-rule py-3"><dt className="text-ink-2">Status</dt><dd><span className={orderStatusTag(order.status)}>{order.status}</span></dd></div>
         <div className="flex justify-between gap-4 border-b border-rule py-3"><dt className="text-ink-2">Payment</dt><dd>Cash on delivery</dd></div>
       </dl>
       <section className="mt-8" aria-labelledby="status-heading"><h2 id="status-heading" className="text-title capitalize">{order.status}</h2>{order.status === 'cancelled' ? <p className="mt-3 text-ink-2">This order was cancelled.</p> : <ol className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">{orderSteps.map((step, index) => <li key={step} aria-current={index === statusIndex ? 'step' : undefined} className={`border-t-2 pt-3 text-sm capitalize ${index <= statusIndex ? 'border-ink font-semibold text-ink' : 'border-rule text-muted'}`}>{step}</li>)}</ol>}</section>

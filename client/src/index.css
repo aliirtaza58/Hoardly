@@ -47,6 +47,14 @@
   .link:hover { text-decoration-color: var(--color-accent); }
   .link:active { opacity: 0.8; }
 
+  /* Links styled as the Button pair, so no button sits inside a link. */
+  .btn-primary, .btn-secondary { display: inline-flex; min-height: var(--size-touch-target); align-items: center; justify-content: center; gap: var(--space-xs); border: var(--rule-hair) solid; border-radius: 10px; padding: var(--space-sm) var(--space-md); font-size: var(--text-sm); font-weight: 600; text-decoration: none; transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out); }
+  .btn-primary { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
+  .btn-primary:hover { background: var(--color-ink-2); border-color: var(--color-ink-2); }
+  .btn-secondary { background: var(--color-paper-2); border-color: var(--color-rule); color: var(--color-ink); }
+  .btn-secondary:hover { background: var(--color-paper-3); }
+  .btn-primary:active, .btn-secondary:active { transform: translateY(1px); }
+
   .photo { border-radius: var(--radius-card); outline: var(--rule-hair) solid var(--color-rule); outline-offset: -1px; }
   .well { background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); }
 }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 import { Spinner } from '../components/common/Spinner.jsx';
 import { ordersService } from '../services/orders.js';
@@ -37,7 +36,7 @@ export function OrderConfirmationPage() {
         </dl>
         <h2 className="mt-8 text-title">What happens next</h2>
         <p className="mt-2 text-ink-2">We prepare your order and update its status in your order history. Pay in cash when it is delivered.</p>
-        <div className="mt-8 flex flex-wrap gap-3"><Link to={`/orders/${order.id}`} className="no-underline"><Button variant="secondary">View order details</Button></Link><Link to="/products" className="no-underline"><Button>Continue shopping</Button></Link></div>
+        <div className="mt-8 flex flex-wrap gap-3"><Link to={`/orders/${order.id}`} className="btn-secondary">View order details</Link><Link to="/products" className="btn-primary">Continue shopping</Link></div>
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useWishlist } from '../contexts/WishlistContext.jsx';
 import { ProductGrid } from '../components/product/ProductGrid.jsx';
-import { Button } from '../components/common/Button.jsx';
 import { Alert } from '../components/common/Alert.jsx';
 
 export function WishlistPage() {
@@ -11,7 +10,7 @@ export function WishlistPage() {
   const { items, isLoading, error } = useWishlist();
 
   if (!isAuthenticated) {
-    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><div className="border-b border-ink pb-6"><h1 className="text-section">Keep your favorites close.</h1><p className="mt-3 text-lead text-ink-2">Sign in to save products and revisit them whenever you are ready.</p></div><Link to="/login" className="mt-6 inline-block no-underline"><Button>Sign in to continue</Button></Link></div>;
+    return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"><div className="border-b border-ink pb-6"><h1 className="text-section">Keep your favorites close.</h1><p className="mt-3 text-lead text-ink-2">Sign in to save products and revisit them whenever you are ready.</p></div><Link to="/login" className="btn-primary mt-6">Sign in to continue</Link></div>;
   }
 
   const products = items.map((item) => item.products).filter(Boolean);
