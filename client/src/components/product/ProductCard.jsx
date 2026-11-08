@@ -49,7 +49,7 @@ export function ProductCard({ product }) {
         <button type="button" disabled={isSaving} onClick={handleSave} className="absolute right-3 top-3 inline-flex min-h-touch min-w-touch items-center justify-center rounded-full border border-rule bg-paper text-ink transition-colors duration-fast hover:bg-paper-2 disabled:cursor-not-allowed disabled:opacity-60" aria-label={isSaved(product.id) ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`} aria-pressed={isSaved(product.id)} aria-busy={isSaving}><Heart className={`h-4 w-4 ${isSaved(product.id) ? 'fill-current' : ''}`} aria-hidden="true" /></button>
       </div>
       <div className="mt-3 space-y-1.5">
-        {saveError && <p role="alert" className="text-sm text-ink">{saveError}</p>}
+        {saveError && <p role="alert" className="text-sm text-feedback-error">{saveError}</p>}
         <Link to={`/products/${product.slug}`} className="block font-semibold leading-snug text-ink no-underline hover:underline hover:decoration-accent">
           {product.name}
         </Link>

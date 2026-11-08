@@ -14,15 +14,15 @@ export function Alert({
   const config = {
     info: {
       container: 'bg-paper-2 border-rule text-ink',
-      icon: <Info className="w-5 h-5 text-feedback-info shrink-0" aria-hidden="true" />,
+      icon: <Info className="w-5 h-5 text-ink shrink-0" aria-hidden="true" />,
     },
     success: {
-      container: 'bg-accent-soft border-accent-soft text-accent-soft-ink',
-      icon: <CheckCircle2 className="w-5 h-5 text-feedback-success shrink-0" aria-hidden="true" />,
+      container: 'bg-paper-2 border-rule text-ink',
+      icon: <CheckCircle2 className="w-5 h-5 text-accent shrink-0" aria-hidden="true" />,
     },
     warning: {
-      container: 'bg-paper-2 border-feedback-warning text-ink',
-      icon: <AlertTriangle className="w-5 h-5 text-feedback-warning shrink-0" aria-hidden="true" />,
+      container: 'bg-paper-2 border-ink text-ink',
+      icon: <AlertTriangle className="w-5 h-5 text-ink shrink-0" aria-hidden="true" />,
     },
     error: {
       container: 'bg-paper border-feedback-error text-ink',
@@ -44,7 +44,7 @@ export function Alert({
         <button
           type="button"
           onClick={onDismiss}
-          className="p-1 rounded-sm hover:bg-paper-3 cursor-pointer text-current"
+          className="-m-2 inline-flex min-h-touch min-w-touch items-center justify-center rounded-control hover:bg-paper-3 cursor-pointer text-current"
           aria-label="Dismiss alert notification"
         >
           <X className="w-4 h-4" aria-hidden="true" />

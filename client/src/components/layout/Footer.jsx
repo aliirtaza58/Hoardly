@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-ink bg-paper">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] lg:px-8">
         <div className="max-w-xs">
-          <Link to="/" className="inline-flex rounded-control" aria-label="Hoardly homepage"><Logo /></Link>
+          <Link to="/" className="inline-flex min-h-touch items-center rounded-control" aria-label="Hoardly homepage"><Logo /></Link>
           <p className="mt-4 text-sm leading-6 text-ink-2">Thoughtfully selected goods for the spaces, routines, and people that matter.</p>
         </div>
         {columns.map(([title, links]) => (
