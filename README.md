@@ -1,4 +1,4 @@
-# Hoardly
+<h1 align="center"><img src="listing-assets/hoardly-logo.png" alt="Hoardly" width="280"></h1>
 
 Hoardly is a full-stack e-commerce application built with a React/Vite storefront, an Express API, and Supabase for authentication, database, and file storage. Orders use cash on delivery.
 
@@ -12,21 +12,21 @@ Actual screenshots from the live deployment. The catalog products, prices, and r
 
 ### Homepage
 
-![Hoardly homepage with featured collections](listing-assets/screenshots-2026-10-07/01-homepage.jpg)
+![Hoardly homepage with the headline, shop buttons, and the shelf of newest products with stock tags](listing-assets/screenshots/01-homepage.jpg)
 
 | Product catalog | Product details |
 | --- | --- |
-| ![Product catalog with search, filters, and product cards](listing-assets/screenshots-2026-10-07/02-product-catalog.jpg) | ![Headphones product page with price, stock, and add-to-cart controls](listing-assets/screenshots-2026-10-07/03-product-details.jpg) |
+| ![Product catalog with filters, sorting, and product photos](listing-assets/screenshots/02-product-catalog.jpg) | ![Headphones product page with price, stock, and add-to-cart controls](listing-assets/screenshots/03-product-details.jpg) |
 
 | Categories | Account sign-in |
 | --- | --- |
-| ![Browse electronics, apparel, and home categories](listing-assets/screenshots-2026-10-07/04-categories.jpg) | ![Customer account sign-in page](listing-assets/screenshots-2026-10-07/05-account-sign-in.jpg) |
+| ![Category list with photos, descriptions, and product counts](listing-assets/screenshots/04-categories.jpg) | ![Customer account sign-in page](listing-assets/screenshots/05-account-sign-in.jpg) |
 
 ### Mobile catalog
 
-<img src="listing-assets/screenshots-2026-10-07/06-mobile-catalog.jpg" alt="Mobile product catalog showing Cotton search results and collapsible filters" width="300">
+<img src="listing-assets/screenshots/06-mobile-catalog.jpg" alt="Mobile product catalog showing Cotton search results and collapsible filters" width="300">
 
-Desktop captures: 7 October 2026. Mobile capture: 6 October 2026. See the [screenshot notes](listing-assets/screenshots-2026-10-07/README.md) for source pages.
+See the [screenshot notes](listing-assets/screenshots/README.md) for source pages.
 
 ## Features
 
