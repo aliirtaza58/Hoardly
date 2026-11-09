@@ -23,6 +23,9 @@ export async function register(req, res, next) {
       if (error.message && error.message.toLowerCase().includes('already registered')) {
         throw createError(409, 'An account with this email already exists. Please sign in instead.');
       }
+      if (error.status === 429 || error.code === 'over_email_send_rate_limit') {
+        throw createError(429, 'Too many sign-up emails have been sent recently. Please wait a while and try again.');
+      }
       if (error.name === 'AuthRetryableFetchError' || error.message?.toLowerCase().includes('fetch failed')) {
         throw createError(503, 'Account creation is temporarily unavailable because the identity service could not be reached. Check the server Supabase settings and try again.');
       }
@@ -128,6 +131,10 @@ export async function forgotPassword(req, res, next) {
     });
 
     if (error) {
+      // Supabase's built-in mailer allows only a few auth emails per hour per project.
+      if (error.status === 429 || error.code === 'over_email_send_rate_limit') {
+        throw createError(429, 'Too many reset emails have been sent recently. Please wait a while and try again.');
+      }
       throw createError(400, error.message || 'Unable to process password reset request. Please try again.');
     }
 
